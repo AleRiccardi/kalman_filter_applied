@@ -19,6 +19,7 @@
   <!-- depend: build, export, and execution dependency -->
   <depend>eigen</depend>
   <depend>roscpp</depend>
+  <depend>rosbag</depend>
   <depend>sensor_msgs</depend>
 
   <build_depend>roslint</build_depend>

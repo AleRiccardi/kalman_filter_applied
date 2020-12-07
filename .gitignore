@@ -1,5 +1,7 @@
 *.idea/ 
 *.vscode/
+.clang_complete        
+data/
 
 # Prerequisites
 *.d

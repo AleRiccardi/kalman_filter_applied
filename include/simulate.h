@@ -1,21 +1,34 @@
 #include <iostream>
 #include <time.h>
 #include <vector>
+#include <string>
 
+#include <Eigen/Dense>
 #include <ros/ros.h>
+#include <rosbag/bag.h>
 #include <Eigen/Dense>
 #include <nav_msgs/Path.h>
 #include <nav_msgs/Odometry.h>
 #include <geometry_msgs/PoseStamped.h>
 
-struct arrow
+struct Character
 {
-    int forward = 105;
-    int left = 106;
-    int backward = 107;
-    int right = 108;
-    int up = 117;
-    int down = 111;
+    char value;
+    std::string info;
+};
+
+class Command
+{
+public:
+    static void print_cmd();
+
+    static Character forward;
+    static Character backward;
+    static Character left;
+    static Character right;
+    static Character up;
+    static Character down;
+    static Character record;
 };
 
 class Simulate
@@ -24,13 +37,20 @@ public:
     Simulate(ros::NodeHandle nh);
     ~Simulate();
 
-    bool get_acc();
+    bool user_control();
     void propagate();
     void pub_state();
+    void start_record();
+    void stop_record();
+    void kill();
 
     double _dt = 0.2;
 
 private:
+    void apply_noise();
+
+    rosbag::Bag _bag;
+
     const double ACC = 0.05;
     Eigen::Matrix<double, 6, 6> _F;
     Eigen::Vector3d _gps_noise;
@@ -44,5 +64,5 @@ private:
     std::vector<geometry_msgs::PoseStamped> _poses;
     std::vector<geometry_msgs::PoseStamped> _poses_noise;
 
-    void apply_noise();
+    bool _recording;
 };

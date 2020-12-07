@@ -12,6 +12,7 @@ find_package(catkin REQUIRED
     roscpp
     sensor_msgs
     roslint
+    rosbag
 )
 ## Find system libraries
 find_package(Eigen3 REQUIRED)
