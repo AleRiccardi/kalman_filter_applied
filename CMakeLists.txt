@@ -67,19 +67,38 @@ include_directories(
 )
 
 
-## Declare a C++ library
+set(SIM "simulation")
+
+## SIMULATION library
+add_library(${SIM}
+  src/${SIM}_node.cpp
+  src/simulation.cpp
+)
+
+## Declare executable
+add_executable(${SIM}_node 
+  src/${SIM}_node.cpp
+)
+
+## Link libraries
+target_link_libraries(${SIM}_node
+  ${SIM}
+  ${catkin_LIBRARIES}
+)
+
+
+## MAIN library
 add_library(${PROJECT_NAME}
-   src/${PROJECT_NAME}_node.cpp
-   src/simulate.cpp
+  src/${PROJECT_NAME}_node.cpp
+  src/simulation.cpp
 )
 
-## Declare a C++ executable
-add_executable(
-    ${PROJECT_NAME}_node 
-    src/kf_applied_node.cpp
+## Executable declaration
+add_executable(${PROJECT_NAME}_node 
+  src/${PROJECT_NAME}_node.cpp
 )
 
-## Link C++ libraries
+## Link libraries
 target_link_libraries(${PROJECT_NAME}_node
   ${PROJECT_NAME}
   ${catkin_LIBRARIES}

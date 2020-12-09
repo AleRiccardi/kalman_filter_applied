@@ -1,4 +1,4 @@
-#include "simulate.h"
+#include "simulation.h"
 
 #include <ros/package.h>
 #include <conio.h>
@@ -26,7 +26,7 @@ void Command::print_cmd()
     std::cout << std::endl;
 }
 
-Simulate::Simulate(ros::NodeHandle nh)
+Simulation::Simulation(ros::NodeHandle nh)
 {
     // Initialize random seed
     std::srand(time(NULL));
@@ -48,12 +48,12 @@ Simulate::Simulate(ros::NodeHandle nh)
     ROS_INFO_STREAM("State Evolution: \n"
                     << _F);
 
-    _pub_pose =
-        nh.advertise<geometry_msgs::PoseStamped>("/kf_applied/gt_pose", 2);
-    ROS_INFO("Publishing: %s", _pub_pose.getTopic().c_str());
+    _pub_pose_gt =
+        nh.advertise<geometry_msgs::PoseStamped>("/kf_applied/pose_gt", 2);
+    ROS_INFO("Publishing: %s", _pub_pose_gt.getTopic().c_str());
 
-    _pub_path = nh.advertise<nav_msgs::Path>("/kf_applied/gt_path", 2);
-    ROS_INFO("Publishing: %s", _pub_path.getTopic().c_str());
+    _pub_path_gt = nh.advertise<nav_msgs::Path>("/kf_applied/path_gt", 2);
+    ROS_INFO("Publishing: %s", _pub_path_gt.getTopic().c_str());
 
     _pub_pose_noise =
         nh.advertise<geometry_msgs::PoseStamped>("/kf_applied/pose_noise", 2);
@@ -65,9 +65,9 @@ Simulate::Simulate(ros::NodeHandle nh)
     Command::print_cmd();
 }
 
-Simulate::~Simulate() {}
+Simulation::~Simulation() {}
 
-bool Simulate::user_control()
+bool Simulation::user_control()
 {
     _acc = Eigen::Matrix<double, 3, 1>::Zero();
 
@@ -119,7 +119,7 @@ bool Simulate::user_control()
     return false;
 }
 
-void Simulate::propagate()
+void Simulation::propagate()
 {
     // _state evolution
     for (int i = 0; i <= _F.rows() - 1; i++)
@@ -133,18 +133,18 @@ void Simulate::propagate()
     apply_noise();
 }
 
-void Simulate::pub_state()
+void Simulation::pub_state()
 {
     // Create pose (note we use the bag time)
-    geometry_msgs::PoseStamped pose;
-    pose.header.stamp = ros::Time::now();
-    pose.header.seq = _poses_count;
-    pose.header.frame_id = "global";
-    pose.pose.position.x = _state(0, 0);
-    pose.pose.position.y = _state(1, 0);
-    pose.pose.position.z = _state(2, 0);
+    geometry_msgs::PoseStamped pose_gt;
+    pose_gt.header.stamp = ros::Time::now();
+    pose_gt.header.seq = _poses_count;
+    pose_gt.header.frame_id = "global";
+    pose_gt.pose.position.x = _state(0, 0);
+    pose_gt.pose.position.y = _state(1, 0);
+    pose_gt.pose.position.z = _state(2, 0);
 
-    _pub_pose.publish(pose);
+    _pub_pose_gt.publish(pose_gt);
 
     // =======================================================
 
@@ -163,46 +163,47 @@ void Simulate::pub_state()
     //=========================================================
 
     // Append to our pose vectors
-    _poses.push_back(pose);
+    _poses.push_back(pose_gt);
     _poses_noise.push_back(pose_noise);
 
     // Create our path
     // NOTE: We downsample the number of poses as needed to prevent rviz crashes
     // NOTE: https://github.com/ros-visualization/rviz/issues/1107
-    nav_msgs::Path arrIMU;
-    arrIMU.header.stamp = pose.header.stamp;
-    arrIMU.header.seq = _poses_count;
-    arrIMU.header.frame_id = "global";
+    nav_msgs::Path arr_poses_gt;
+    arr_poses_gt.header.stamp = pose_gt.header.stamp;
+    arr_poses_gt.header.seq = _poses_count;
+    arr_poses_gt.header.frame_id = "global";
     for (size_t i = 0; i < _poses.size();
          i += std::floor(_poses.size() / 16384.0) + 1)
     {
-        arrIMU.poses.push_back(_poses.at(i));
+        arr_poses_gt.poses.push_back(_poses.at(i));
     }
-    _pub_path.publish(arrIMU);
+    _pub_path_gt.publish(arr_poses_gt);
 
     // =======================================================
 
-    nav_msgs::Path arrIMU_noise;
-    arrIMU_noise.header.stamp = pose_noise.header.stamp;
-    arrIMU_noise.header.seq = _poses_count;
-    arrIMU_noise.header.frame_id = "global";
+    nav_msgs::Path arr_poses_noise;
+    arr_poses_noise.header.stamp = pose_noise.header.stamp;
+    arr_poses_noise.header.seq = _poses_count;
+    arr_poses_noise.header.frame_id = "global";
     for (size_t i = 0; i < _poses_noise.size();
          i += std::floor(_poses_noise.size() / 16384.0) + 1)
     {
-        arrIMU_noise.poses.push_back(_poses_noise.at(i));
+        arr_poses_noise.poses.push_back(_poses_noise.at(i));
     }
-    _pub_path_noise.publish(arrIMU_noise);
+    _pub_path_noise.publish(arr_poses_noise);
 
     // Move forward in time
     _poses_count++;
 
     if (_recording == true)
     {
-        _bag.write(_pub_pose.getTopic().c_str(), pose.header.stamp, pose);
+        _bag.write(_pub_pose_gt.getTopic().c_str(), pose_gt.header.stamp, pose_gt);
+        _bag.write(_pub_pose_noise.getTopic().c_str(), pose_noise.header.stamp, pose_noise);
     }
 }
 
-void Simulate::apply_noise()
+void Simulation::apply_noise()
 {
     Eigen::Vector3d rands;
     rands(0, 0) = (double)((std::rand() % 200) - 100) / 100;
@@ -219,7 +220,7 @@ void Simulate::apply_noise()
     _state_noise.head(3) = _state.head(3) + noise;
 }
 
-void Simulate::start_record()
+void Simulation::start_record()
 {
     _recording = true;
     // TODO: get name from ros
@@ -230,14 +231,14 @@ void Simulate::start_record()
     _bag.open(pathPname, rosbag::bagmode::Write);
 }
 
-void Simulate::stop_record()
+void Simulation::stop_record()
 {
     ROS_INFO("Recording stopped");
     _recording = false;
     _bag.close();
 }
 
-void Simulate::kill()
+void Simulation::kill()
 {
     if (_recording == true)
     {

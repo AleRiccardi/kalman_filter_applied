@@ -1,0 +1,23 @@
+<launch>
+
+    <node name="kf_applied_node" pkg="kf_applied" type="kf_applied_node"
+          respawn="false" output="screen">
+
+        <!-- general -->
+        <param name="wait_mode" type="double" value="1"/>
+
+        <!-- bag topics -->
+        <param name="topic_pose" type="string" value="/kf_applied/pose_noise"/>
+
+        <!-- bag parameters -->
+        <param name="path_bag" type="string"
+               value="/home/alericcardi/Workspaces/ws_kf/src/kalman_filter_applied/data/1607535781.bag"/>
+
+        <!-- sensor noise values / update -->
+
+    </node>
+
+
+    <!-- <node type="rviz" name="rviz" pkg="rviz" args="-d $(find my_ekf)/rviz/..."/> -->
+
+</launch>

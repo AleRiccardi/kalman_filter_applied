@@ -31,11 +31,11 @@ public:
     static Character record;
 };
 
-class Simulate
+class Simulation
 {
 public:
-    Simulate(ros::NodeHandle nh);
-    ~Simulate();
+    Simulation(ros::NodeHandle nh);
+    ~Simulation();
 
     bool user_control();
     void propagate();
@@ -60,7 +60,7 @@ private:
     Eigen::Matrix<double, 6, 1> _state_noise;
     Eigen::Matrix<double, 3, 1> _acc;
 
-    ros::Publisher _pub_pose, _pub_path, _pub_pose_noise, _pub_path_noise;
+    ros::Publisher _pub_pose_gt, _pub_path_gt, _pub_pose_noise, _pub_path_noise;
     std::vector<geometry_msgs::PoseStamped> _poses;
     std::vector<geometry_msgs::PoseStamped> _poses_noise;
 
