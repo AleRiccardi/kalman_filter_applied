@@ -4,7 +4,7 @@ project(kf_applied)
 ## Use C++14
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-add_definitions(-Wall -Werror)
+add_definitions(-Wall)
 
 ## Find catkin macros and libraries
 find_package(catkin REQUIRED
@@ -72,7 +72,7 @@ set(SIM "simulation")
 ## SIMULATION library
 add_library(${SIM}
   src/${SIM}_node.cpp
-  src/simulation.cpp
+  src/simulation/simulation.cpp
 )
 
 ## Declare executable
@@ -90,7 +90,9 @@ target_link_libraries(${SIM}_node
 ## MAIN library
 add_library(${PROJECT_NAME}
   src/${PROJECT_NAME}_node.cpp
-  src/simulation.cpp
+  src/utils/ParamsManager.cpp
+  src/core/CoreManager.cpp
+  src/core/KalmanFilter.cpp
 )
 
 ## Executable declaration

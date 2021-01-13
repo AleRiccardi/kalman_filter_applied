@@ -1,7 +1,6 @@
 <launch>
 
-    <node name="kf_applied_node" pkg="kf_applied" type="kf_applied_node"
-          respawn="false" output="screen">
+    <node name="kf_applied_node" pkg="kf_applied" type="kf_applied_node" respawn="false" output="screen">
 
         <!-- general -->
         <param name="wait_mode" type="double" value="1"/>
@@ -10,10 +9,10 @@
         <param name="topic_pose" type="string" value="/kf_applied/pose_noise"/>
 
         <!-- bag parameters -->
-        <param name="path_bag" type="string"
-               value="/home/alericcardi/Workspaces/ws_kf/src/kalman_filter_applied/data/1607535781.bag"/>
+        <param name="path_bag" type="string" value="/home/alericcardi/Workspaces/ws_kf/src/kalman_filter_applied/data/1607535781.bag"/>
 
         <!-- sensor noise values / update -->
+        <rosparam param="gps_noise">[0.15, 0.15, 0.05]</rosparam>
 
     </node>
 
