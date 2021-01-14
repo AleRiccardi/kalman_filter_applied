@@ -1,4 +1,7 @@
+#include <Eigen/Dense>
+
 #include "utils/ParamsManager.h"
+#include "utils/types.h"
 
 /**
  * @brief The Kalman Filter class.
@@ -20,17 +23,45 @@ class KalmanFilter {
   ~KalmanFilter() = default;
 
   /**
+   * @brief Initialize the state and timestamp.
+   */
+  void Initialize(const GPSDATA& gps1, const GPSDATA& gps2);
+
+  /**
    * @brief Propagation step.
    *
    */
-  void Propagation();
+  void Propagation(double timestamp);
 
   /**
    * @brief Correction step.
    *
    */
-  void Correction();
+  void Correction(Eigen::Matrix<double, 3, 1> gps_pose);
+
+  Eigen::Matrix<double, 3, 1> GetState();
 
  private:
+  void UpdateF(double timestamp);
+
+  void UpdateH();
+
+  // Parameters system manager
   ParamsManager* params_;
+
+  // State vector
+  Eigen::Matrix<double, 9, 1> state_;
+  // Covariance matrix
+  Eigen::Matrix<double, 9, 9> P_;
+  // State-Transition matrix
+  Eigen::Matrix<double, 9, 9> F_;
+  // Observation Matrix
+  Eigen::Matrix<double, 9, 9> H_;
+  // Propagation covariance noise
+  Eigen::Matrix<double, 9, 9> D_;
+  // Observation covariance noise
+  Eigen::Matrix<double, 9, 9> R_;
+
+  double dt_ = 0;
+  double timestamp_ = 0;
 };

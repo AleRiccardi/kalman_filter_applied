@@ -8,16 +8,15 @@ add_definitions(-Wall)
 
 ## Find catkin macros and libraries
 find_package(catkin REQUIRED
-  COMPONENTS
-    roscpp
-    sensor_msgs
-    roslint
-    rosbag
-)
+        COMPONENTS
+        roscpp
+        sensor_msgs
+        roslint
+        rosbag
+        )
 ## Find system libraries
 find_package(Eigen3 REQUIRED)
 find_package(Boost REQUIRED)
-
 
 
 ###################################
@@ -30,22 +29,22 @@ find_package(Boost REQUIRED)
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-  INCLUDE_DIRS
-    include
-    ## This is only necessary because Eigen3 sets a non-standard EIGEN3_INCLUDE_DIR variable
-    ${EIGEN3_INCLUDE_DIR}
-  LIBRARIES
-    ${PROJECT_NAME}_core
-  CATKIN_DEPENDS
-    roscpp
-    sensor_msgs
-  DEPENDS
-  ## find_package(Eigen3) provides a non standard EIGEN3_INCLUDE_DIR instead of Eigen3_INCLUDE_DIRS.
-  ## Therefore, the DEPEND does not work as expected and we need to add the directory to the INCLUDE_DIRS
-  # Eigen3
+        INCLUDE_DIRS
+        include
+        ## This is only necessary because Eigen3 sets a non-standard EIGEN3_INCLUDE_DIR variable
+        ${EIGEN3_INCLUDE_DIR}
+        LIBRARIES
+        ${PROJECT_NAME}_core
+        CATKIN_DEPENDS
+        roscpp
+        sensor_msgs
+        DEPENDS
+        ## find_package(Eigen3) provides a non standard EIGEN3_INCLUDE_DIR instead of Eigen3_INCLUDE_DIRS.
+        ## Therefore, the DEPEND does not work as expected and we need to add the directory to the INCLUDE_DIRS
+        # Eigen3
 
-  ## Boost is not part of the DEPENDS since it is only used in source files,
-  ## Dependees do not depend on Boost when they depend on this package.
+        ## Boost is not part of the DEPENDS since it is only used in source files,
+        ## Dependees do not depend on Boost when they depend on this package.
 )
 
 ###########
@@ -58,12 +57,12 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-  include
-  ${catkin_INCLUDE_DIRS}
-  # Set manually because Eigen sets a non standard INCLUDE DIR
-  ${EIGEN3_INCLUDE_DIR}
-  # Set because Boost is an internal dependency, not transitive.
-  ${Boost_INCLUDE_DIRS}
+        include
+        ${catkin_INCLUDE_DIRS}
+        # Set manually because Eigen sets a non standard INCLUDE DIR
+        ${EIGEN3_INCLUDE_DIR}
+        # Set because Boost is an internal dependency, not transitive.
+        ${Boost_INCLUDE_DIRS}
 )
 
 
@@ -71,41 +70,41 @@ set(SIM "simulation")
 
 ## SIMULATION library
 add_library(${SIM}
-  src/${SIM}_node.cpp
-  src/simulation/simulation.cpp
-)
+        src/${SIM}_node.cpp
+        src/simulation/simulation.cpp
+        )
 
 ## Declare executable
-add_executable(${SIM}_node 
-  src/${SIM}_node.cpp
-)
+add_executable(${SIM}_node
+        src/${SIM}_node.cpp
+        )
 
 ## Link libraries
 target_link_libraries(${SIM}_node
-  ${SIM}
-  ${catkin_LIBRARIES}
-)
+        ${SIM}
+        ${catkin_LIBRARIES}
+        )
 
 
 ## MAIN library
 add_library(${PROJECT_NAME}
-  src/${PROJECT_NAME}_node.cpp
-  src/utils/ParamsManager.cpp
-  src/core/CoreManager.cpp
-  src/core/KalmanFilter.cpp
-)
+        src/${PROJECT_NAME}_node.cpp
+        src/utils/ParamsManager.cpp
+        src/core/CoreManager.cpp
+        src/core/KalmanFilter.cpp
+        include/utils/colors.h
+        include/utils/types.h)
 
 ## Executable declaration
-add_executable(${PROJECT_NAME}_node 
-  src/${PROJECT_NAME}_node.cpp
-)
+add_executable(${PROJECT_NAME}_node
+        src/${PROJECT_NAME}_node.cpp
+        )
 
 ## Link libraries
 target_link_libraries(${PROJECT_NAME}_node
-  ${PROJECT_NAME}
-  ${catkin_LIBRARIES}
-)
-
+        ${PROJECT_NAME}
+        ${catkin_LIBRARIES}
+        )
 
 
 #############

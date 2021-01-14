@@ -15,8 +15,7 @@ int main(int argc, char** argv) {
   ros::NodeHandle nh("~");
 
   auto* params = new ParamsManager(nh);
-  auto* core = new CoreManager(params);
-
+  auto* core = new CoreManager(nh, params);
 
   // ---------------------------------------------------------------------------
   // WAIT MODE
@@ -43,10 +42,14 @@ int main(int argc, char** argv) {
   //============================================================================
   //============================================================================
 
-  // Our  topics (left and right stereo)
+  // GPS pose
   std::string topic_pose;
-  nh.param<std::string>("topic_pose", topic_pose, "/kf_applied/pose_noise");
+  nh.param<std::string>("topic_pose_gps", topic_pose, "/kf_applied/pose_noise");
   ROS_INFO("topic pose is: %s", topic_pose.c_str());
+  // Ground truth pose
+  std::string topic_pose_gt;
+  nh.param<std::string>("topic_pose_gt", topic_pose, "/kf_applied/pose_gt");
+  ROS_INFO("topic pose GT is: %s", topic_pose_gt.c_str());
 
   // Location of the ROS bag we want to read in
   std::string path_to_bag;
@@ -103,21 +106,35 @@ int main(int argc, char** argv) {
     if (!ros::ok()) break;
 
     // Handle IMU measurement
-    geometry_msgs::PoseStamped::ConstPtr pose_noise =
+    geometry_msgs::PoseStamped::ConstPtr pose_m =
         m.instantiate<geometry_msgs::PoseStamped>();
-    if (pose_noise != nullptr && m.getTopic() == topic_pose) {
+    if (pose_m != nullptr && m.getTopic() == topic_pose) {
       // convert into correct format
       // int seq = (*pose_noise).header.seq; // unused
-      double timem = (*pose_noise).header.stamp.toSec();
+      double timem = (*pose_m).header.stamp.toSec();
       Eigen::Vector3d pose;
-      pose(0) = (*pose_noise).pose.position.x;
-      pose(1) = (*pose_noise).pose.position.y;
-      pose(2) = (*pose_noise).pose.position.z;
+      pose(0) = (*pose_m).pose.position.x;
+      pose(1) = (*pose_m).pose.position.y;
+      pose(2) = (*pose_m).pose.position.z;
 
       core->FeedMeasurementGPS(timem, pose);
+      core->StateEstimation();
     }
 
-    core->StateEstimation();
+    if (pose_m != nullptr && m.getTopic() == topic_pose_gt) {
+      // convert into correct format
+      // int seq = (*pose_noise).header.seq; // unused
+      double timem = (*pose_m).header.stamp.toSec();
+      Eigen::Vector3d pose;
+      pose(0) = (*pose_m).pose.position.x;
+      pose(1) = (*pose_m).pose.position.y;
+      pose(2) = (*pose_m).pose.position.z;
+
+      std::cout << "Prove" << std::endl;
+      std::cout << pose << std::endl;
+      core->FeedGT(timem, pose);
+    }
+    core->Display();
   }
 
   return 0;

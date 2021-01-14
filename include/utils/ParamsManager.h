@@ -1,7 +1,8 @@
-#ifndef KF_APPLIED_MANAGEROPTIONS_H
-#define KF_APPLIED_MANAGEROPTIONS_H
+#ifndef KF_APPLIED_PARAMSMANAGER_H
+#define KF_APPLIED_PARAMSMANAGER_H
 
 #include <ros/ros.h>
+#include <utils/colors.h>
 
 #include <Eigen/Eigen>
 #include <iostream>
@@ -13,16 +14,17 @@ class ParamsManager {
   ParamsManager(ros::NodeHandle& nh);
   ~ParamsManager() = default;
 
-  // NOISE ============================
+  // Noise vector
   Eigen::Vector3d gps_noise = {0.15, 0.15, 0.05};
+
   /**
    * @brief This function will print out all noise parameters loaded.
    * This allows for visual checking that everything was loaded properly from
    * ROS parsers.
    */
   void PrintNoise() const {
-    ROS_INFO("NOISE PARAMETERS:");
-    ROS_INFO_STREAM("\n" << gps_noise);
+    printf(GREEN "\t- NOISE PARAMETERS - \n" RESET);
+    std::cout << gps_noise << std::endl;
   }
 
  private:

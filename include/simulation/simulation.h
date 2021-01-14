@@ -52,7 +52,7 @@ class Simulation {
   Eigen::Vector3d gps_noise_;
 
   int poses_count_ = 0;
-  Eigen::Matrix<double, 6, 1> _state;
+  Eigen::Matrix<double, 6, 1> state_;
   Eigen::Matrix<double, 6, 1> state_noise_;
   Eigen::Matrix<double, 3, 1> acc_;
 

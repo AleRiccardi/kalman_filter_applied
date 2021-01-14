@@ -30,15 +30,15 @@ Simulation::Simulation(ros::NodeHandle nh) {
   // Initialize random seed
   std::srand(time(nullptr));
 
-  _state.setZero();
-  ROS_INFO_STREAM("Init State: \n" << _state);
+  state_.setZero();
+  ROS_INFO_STREAM("Init State: \n" << state_);
 
   acc_.setZero();
   ROS_INFO_STREAM("Init Acceleration: \n" << acc_);
 
   gps_noise_ = Eigen::Vector3d(0.15, 0.15, 0.05);
 
-  std::cout << _state << std::endl;
+  std::cout << state_ << std::endl;
   _F << 1, 0, 0, dt, 0, 0, 0, 1, 0, 0, dt, 0, 0, 0, 1, 0, 0, dt, 0, 0, 0, 1, 0,
       0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1;
 
@@ -99,11 +99,11 @@ bool Simulation::UserControl() {
 void Simulation::propagate() {
   // _state evolution
   for (int i = 0; i <= _F.rows() - 1; i++) {
-    double val = _F.row(i).dot(_state);
-    _state(i, 0) = val;
+    double val = _F.row(i).dot(state_);
+    state_(i, 0) = val;
   }
 
-  _state.tail(3) += acc_;
+  state_.tail(3) += acc_;
 
   apply_noise();
 }
@@ -114,9 +114,9 @@ void Simulation::PubState() {
   pose_gt.header.stamp = ros::Time::now();
   pose_gt.header.seq = poses_count_;
   pose_gt.header.frame_id = "global";
-  pose_gt.pose.position.x = _state(0, 0);
-  pose_gt.pose.position.y = _state(1, 0);
-  pose_gt.pose.position.z = _state(2, 0);
+  pose_gt.pose.position.x = state_(0, 0);
+  pose_gt.pose.position.y = state_(1, 0);
+  pose_gt.pose.position.z = state_(2, 0);
 
   pub_pose_gt_.publish(pose_gt);
 
@@ -188,8 +188,8 @@ void Simulation::apply_noise() {
   noise(1) = gps_noise_(1) * rands(1);
   noise(2) = gps_noise_(2) * rands(2);
 
-  state_noise_ = _state;
-  state_noise_.head(3) = _state.head(3) + noise;
+  state_noise_ = state_;
+  state_noise_.head(3) = state_.head(3) + noise;
 }
 
 void Simulation::StartRecord() {
