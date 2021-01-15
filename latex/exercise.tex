@@ -1,0 +1,77 @@
+\documentclass{article}
+
+% If you're new to LaTeX, here's some short tutorials:
+% https://www.overleaf.com/learn/latex/Learn_LaTeX_in_30_minutes
+% https://en.wikibooks.org/wiki/LaTeX/Basics
+
+% Formatting
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage[titletoc,title]{appendix}
+
+\usepackage{hyperref}
+
+% Math
+% https://www.overleaf.com/learn/latex/Mathematical_expressions
+% https://en.wikibooks.org/wiki/LaTeX/Mathematics
+\usepackage{amsmath,amsfonts,amssymb,mathtools}
+
+% Images
+% https://www.overleaf.com/learn/latex/Inserting_Images
+% https://en.wikibooks.org/wiki/LaTeX/Floats,_Figures_and_Captions
+\usepackage{graphicx,float}
+
+% Tables
+% https://www.overleaf.com/learn/latex/Tables
+% https://en.wikibooks.org/wiki/LaTeX/Tables
+
+% Algorithms
+% https://www.overleaf.com/learn/latex/algorithms
+% https://en.wikibooks.org/wiki/LaTeX/Algorithms
+\usepackage[ruled,vlined]{algorithm2e}
+\usepackage{algorithmic}
+
+% Code syntax highlighting
+% https://www.overleaf.com/learn/latex/Code_Highlighting_with_minted
+%\usepackage{minted}
+%\usemintedstyle{borland}
+
+
+
+% Title content
+\title{Kalman Filter Application}
+\author{Alssandro Riccardi}
+\date{\today}
+
+\begin{document}
+    
+        \maketitle
+            
+                % Abstract
+                    \begin{abstract}
+                            This is a simple exercise where you will have to complete the Kalman Filter algorithm.
+                                \end{abstract}
+                                    
+                                        % Introduction and Overview
+                                            \section{The Exercise}
+                                                What you have to do is simple, implement the \textit{Propagation} and \textit{Correction} step of the Kalman Filter. I provide you with a framework where the 80\% of the work is already done, but still not complete. Find the correct functions that needs to be completed and complete them. Just remember, the required matrices are already implemented. 
+                                                    
+                                                        % Example Subsection
+                                                            \subsection{The Software}
+                                                                The \textit{kalman\_filter\_applied} is the name of the software. Its function is to simulate a trajectory and generate GPS measurements that will be recorded. With these recordings you can then estimate the truth trajectory by using the KF (that you have to complete).
+                                                                    
+                                                                        
+                                                                            % Example Subsection
+                                                                                \subsubsection{The Kalman Filter}
+                                                                                    The Kalman Filter is an algorithm that uses a series of measurements observed over time, containing statistical noise and other inaccuracies, and produces estimates of unknown variables that tend to be more accurate than those based on a single measurement alone, by estimating a joint probability distribution over the variables for each timeframe. The filter is named after Rudolf E. Kálmán, one of the primary developers of its theory. 
+                                                                                        
+                                                                                            Some useful resources:
+                                                                                                \begin{itemize}
+                                                                                                        \item \url{https://en.wikipedia.org/wiki/Kalman_filter} 
+                                                                                                                \item  \url{https://www.kalmanfilter.net/default.aspx}  
+                                                                                                                    \end{itemize}
+                                                                                                                        
+                                                                                                                            
+                                                                                                                                
+                                                                                                                                \end{document}
+
