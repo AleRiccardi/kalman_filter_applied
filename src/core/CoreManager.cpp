@@ -53,74 +53,6 @@ void CoreManager::StateEstimation() {
   kf_->Correction(gps.pose);
 }
 
-void CoreManager::Display() {
-  if (gt_data_.empty()) return;
-
-  Eigen::MatrixXd state_ = kf_->GetState();
-  Eigen::MatrixXd gt = gt_data_[gt_data_.size() - 1].pose;
-
-  // Create pose (note we use the bag time)
-  geometry_msgs::PoseStamped pose;
-  pose.header.stamp = ros::Time::now();
-  pose.header.seq = poses_count_;
-  pose.header.frame_id = "global";
-  pose.pose.position.x = state_(0, 0);
-  pose.pose.position.y = state_(1, 0);
-  pose.pose.position.z = state_(2, 0);
-
-  pub_pose_.publish(pose);
-
-  std::cout << "fgsgfdsdf" << std::endl;
-  std::cout << pose << std::endl;
-  // =======================================================
-
-  // Create pose (note we use the bag time)
-  geometry_msgs::PoseStamped pose_gt;
-  pose_gt.header.stamp = ros::Time::now();
-  pose_gt.header.seq = poses_count_;
-  pose_gt.header.frame_id = "global";
-  pose_gt.pose.position.x = gt(0, 0);
-  pose_gt.pose.position.y = gt(1, 0);
-  pose_gt.pose.position.z = gt(2, 0);
-
-  pub_pose_gt_.publish(pose_gt);
-
-  //=========================================================
-  //=========================================================
-
-  // Append to our pose vectors
-  poses_.push_back(pose);
-  poses_gt_.push_back(pose_gt);
-
-  // Create our path
-  // NOTE: We downsample the number of poses as needed to prevent rviz crashes
-  // NOTE: https://github.com/ros-visualization/rviz/issues/1107
-  nav_msgs::Path arr_poses_gt;
-  arr_poses_gt.header.stamp = pose_gt.header.stamp;
-  arr_poses_gt.header.seq = poses_count_;
-  arr_poses_gt.header.frame_id = "global";
-  for (size_t i = 0; i < poses_.size();
-       i += std::floor(poses_.size() / 16384.0) + 1) {
-    arr_poses_gt.poses.push_back(poses_.at(i));
-  }
-  pub_path_gt_.publish(arr_poses_gt);
-
-  // =======================================================
-
-  nav_msgs::Path arr_poses;
-  arr_poses.header.stamp = pose.header.stamp;
-  arr_poses.header.seq = poses_count_;
-  arr_poses.header.frame_id = "global";
-  for (size_t i = 0; i < poses_.size();
-       i += std::floor(poses_gt_.size() / 16384.0) + 1) {
-    arr_poses.poses.push_back(poses_.at(i));
-  }
-  pub_path_.publish(arr_poses);
-
-  // Move forward in time
-  poses_count_++;
-}
-
 bool CoreManager::Initialize() {
   // Required 2 GPS measurements for init
   if (gps_data_.size() < 2) {
@@ -145,4 +77,72 @@ bool CoreManager::PopMeasurement(GPSDATA& gps) {
   gps = gps_data_[0];
   gps_data_.erase(gps_data_.begin());
   return true;
+}
+
+void CoreManager::Display() {
+  // TODO: publish the correct ground truth pose based on the time
+  // of the state estimation and not based on the last stored ground truth.
+  if (gt_data_.empty()) return;
+
+  Eigen::MatrixXd state = kf_->GetState();
+  Eigen::MatrixXd gt = gt_data_[gt_data_.size() - 1].pose;
+
+  // Create pose (note we use the bag time)
+  geometry_msgs::PoseStamped pose;
+  pose.header.stamp = ros::Time::now();
+  pose.header.seq = poses_count_;
+  pose.header.frame_id = "global";
+  pose.pose.position.x = state(0, 0);
+  pose.pose.position.y = state(1, 0);
+  pose.pose.position.z = state(2, 0);
+
+  pub_pose_.publish(pose);
+
+  // =======================================================
+
+  // Create pose (note we use the bag time)
+  geometry_msgs::PoseStamped pose_gt;
+  pose_gt.header.stamp = ros::Time::now();
+  pose_gt.header.seq = poses_count_;
+  pose_gt.header.frame_id = "global";
+  pose_gt.pose.position.x = gt(0, 0);
+  pose_gt.pose.position.y = gt(1, 0);
+  pose_gt.pose.position.z = gt(2, 0);
+
+  pub_pose_gt_.publish(pose_gt);
+
+  //=========================================================
+  //=========================================================
+
+  // Append to our pose vectors
+  poses_.push_back(pose);
+  poses_gt_.push_back(pose_gt);
+
+  // Create our path
+  // NOTE: We downsample the number of poses as needed to prevent rviz crashes
+  // NOTE: https://github.com/ros-visualization/rviz/issues/1107
+  nav_msgs::Path arr_poses;
+  arr_poses.header.stamp = pose.header.stamp;
+  arr_poses.header.seq = poses_count_;
+  arr_poses.header.frame_id = "global";
+  for (size_t i = 0; i < poses_.size();
+       i += std::floor(poses_.size() / 16384.0) + 1) {
+    arr_poses.poses.push_back(poses_.at(i));
+  }
+  pub_path_.publish(arr_poses);
+
+  // =======================================================
+
+  nav_msgs::Path arr_poses_gt;
+  arr_poses_gt.header.stamp = pose_gt.header.stamp;
+  arr_poses_gt.header.seq = poses_count_;
+  arr_poses_gt.header.frame_id = "global";
+  for (size_t i = 0; i < poses_gt_.size();
+       i += std::floor(poses_gt_.size() / 16384.0) + 1) {
+    arr_poses_gt.poses.push_back(poses_gt_.at(i));
+  }
+  pub_path_gt_.publish(arr_poses_gt);
+
+  // Move forward in time
+  poses_count_++;
 }

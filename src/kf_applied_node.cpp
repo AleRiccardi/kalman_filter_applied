@@ -8,6 +8,8 @@
 
 #include <Eigen/Eigen>
 
+#include "utils/colors.h"
+
 // Main function
 int main(int argc, char** argv) {
   // Launch our ros node
@@ -48,7 +50,7 @@ int main(int argc, char** argv) {
   ROS_INFO("topic pose is: %s", topic_pose.c_str());
   // Ground truth pose
   std::string topic_pose_gt;
-  nh.param<std::string>("topic_pose_gt", topic_pose, "/kf_applied/pose_gt");
+  nh.param<std::string>("topic_pose_gt", topic_pose_gt, "/kf_applied/pose_gt");
   ROS_INFO("topic pose GT is: %s", topic_pose_gt.c_str());
 
   // Location of the ROS bag we want to read in
@@ -105,9 +107,10 @@ int main(int argc, char** argv) {
     // If ros wants us to stop, break out
     if (!ros::ok()) break;
 
-    // Handle IMU measurement
+    // Handle Pose (GPS) measurement
     geometry_msgs::PoseStamped::ConstPtr pose_m =
         m.instantiate<geometry_msgs::PoseStamped>();
+
     if (pose_m != nullptr && m.getTopic() == topic_pose) {
       // convert into correct format
       // int seq = (*pose_noise).header.seq; // unused
@@ -130,8 +133,6 @@ int main(int argc, char** argv) {
       pose(1) = (*pose_m).pose.position.y;
       pose(2) = (*pose_m).pose.position.z;
 
-      std::cout << "Prove" << std::endl;
-      std::cout << pose << std::endl;
       core->FeedGT(timem, pose);
     }
     core->Display();

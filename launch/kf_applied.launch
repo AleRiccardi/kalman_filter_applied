@@ -10,7 +10,7 @@
     <param name="topic_pose_gt" type="string" value="/kf_applied/pose_gt"/>
 
     <!-- bag parameters -->
-    <param name="path_bag" type="string" value="/home/alericcardi/Workspaces/ws_kf/src/kalman_filter_applied/data/1610628360.bag"/>
+    <param name="path_bag" type="string" value="/home/alericcardi/Workspaces/ws_kf/src/kalman_filter_applied/data/1610699596.bag"/>
 
     <!-- sensor noise values / update -->
     <rosparam param="gps_noise">[0.15, 0.15, 0.05]</rosparam>

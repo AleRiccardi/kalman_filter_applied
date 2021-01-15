@@ -8,7 +8,7 @@ KalmanFilter::KalmanFilter(ParamsManager* params) {
 
   // Init State w/ const acc.
   state_.setZero();
-  state_.block<3, 1>(3, 0) = Eigen::MatrixXd::Ones(3, 1) * 0.05;
+  state_.block<3, 1>(3, 0) = Eigen::MatrixXd::Ones(3, 1) * 0.02;
 
   // Init the Covariance matrix
   P_.setZero();
@@ -24,9 +24,9 @@ KalmanFilter::KalmanFilter(ParamsManager* params) {
 
   // Init Propagation covariance noise
   R_.setZero();
-  R_(0, 0) = std::pow(params->gps_noise[0], 2);
-  R_(1, 1) = std::pow(params->gps_noise[1], 2);
-  R_(2, 2) = std::pow(params->gps_noise[2], 2);
+  R_(0, 0) = params->gps_noise[0];
+  R_(1, 1) = params->gps_noise[1];
+  R_(2, 2) = params->gps_noise[2];
   std::cout << "R" << std::endl;
   std::cout << R_ << std::endl;
 }
@@ -41,7 +41,7 @@ void KalmanFilter::Initialize(const GPSDATA& gps1, const GPSDATA& gps2) {
 }
 
 void KalmanFilter::Propagation(double timestamp) {
-  // Update F with the updated dt
+  // Update F with the correct time offset (dt)
   UpdateF(timestamp);
 
   // Propagate the state
@@ -63,8 +63,10 @@ void KalmanFilter::Correction(Eigen::Matrix<double, 3, 1> gps_pose) {
   K = P_ * H_.transpose() * S.completeOrthogonalDecomposition().pseudoInverse();
 
   state_ = state_ + K * residual;
-  P_ = P_ - K * S * K.transpose();
+  // P_ = P_ - K * S * K.transpose();
+  P_ = (Eigen::MatrixXd::Identity(9, 9) * K * H_) * P_;
 
+  // Print the difference between the state and the gps
   std::cout << "================================" << std::endl;
   std::cout << "GPS" << std::endl;
   std::cout << gps_pose << std::endl;
