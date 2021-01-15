@@ -45,9 +45,8 @@ void KalmanFilter::Propagation(double timestamp) {
   UpdateF(timestamp);
 
   // Propagate the state
-  state_ = F_ * state_;
+
   // Propagate the covariance
-  P_ = F_ * P_ * F_.transpose() + D_;
 }
 
 void KalmanFilter::Correction(Eigen::Matrix<double, 3, 1> gps_pose) {
@@ -56,24 +55,11 @@ void KalmanFilter::Correction(Eigen::Matrix<double, 3, 1> gps_pose) {
   Eigen::Matrix<double, 9, 9> K;
   residual.setZero();
 
-  // Compute residual between GPS measurement and State
-  residual.topLeftCorner(3, 1) = gps_pose - state_.topLeftCorner(3, 1);
+  // Compute the residual and the Kalman Gain
 
-  S = H_ * P_ * H_.transpose() + R_;
-  K = P_ * H_.transpose() * S.completeOrthogonalDecomposition().pseudoInverse();
+  // Correct the state
 
-  state_ = state_ + K * residual;
-  // P_ = P_ - K * S * K.transpose();
-  P_ = (Eigen::MatrixXd::Identity(9, 9) * K * H_) * P_;
-
-  // Print the difference between the state and the gps
-  std::cout << "================================" << std::endl;
-  std::cout << "GPS" << std::endl;
-  std::cout << gps_pose << std::endl;
-  std::cout << "---------------------" << std::endl;
-  std::cout << "STATE" << std::endl;
-  std::cout << state_.topLeftCorner(3, 1) << std::endl;
-  std::cout << "================================" << std::endl << std::endl;
+  // Correct the covariance
 }
 
 void KalmanFilter::UpdateF(double timestamp) {

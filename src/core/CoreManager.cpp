@@ -87,6 +87,15 @@ void CoreManager::Display() {
   Eigen::MatrixXd state = kf_->GetState();
   Eigen::MatrixXd gt = gt_data_[gt_data_.size() - 1].pose;
 
+  // Print the difference between the state and the gt
+  std::cout << "================================" << std::endl;
+  std::cout << "GT" << std::endl;
+  std::cout << gt << std::endl;
+  std::cout << "---------------------" << std::endl;
+  std::cout << "STATE" << std::endl;
+  std::cout << state.topLeftCorner(3, 1) << std::endl;
+  std::cout << "================================" << std::endl << std::endl;
+
   // Create pose (note we use the bag time)
   geometry_msgs::PoseStamped pose;
   pose.header.stamp = ros::Time::now();
