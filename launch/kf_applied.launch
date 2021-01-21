@@ -9,10 +9,14 @@
 
     <!-- bag topics -->
     <param name="frame_id" type="string" value="global"/>
+
     <param name="topic_gt" type="string" value="/kf_applied/gt"/>
+    <param name="topic_gt_path" type="string" value="/kf_applied/gt_path"/>
+    <param name="topic_estimation" type="string" value="/kf_applied/estimation"/>
+    <param name="topic_estimation_path" type="string" value="/kf_applied/estimation_path"/>
+
     <param name="topic_gps" type="string" value="/kf_applied/gps"/>
     <param name="topic_radar" type="string" value="/kf_applied/radar"/>
-    <param name="topic_estimation" type="string" value="/kf_applied/estimation"/>
 
     <!-- bag parameters -->
     <param name="path_bag" type="string" value="/home/alericcardi/Workspaces/ws_kf/src/kalman_filter_applied/data/1611219708.bag"/>

@@ -1,3 +1,6 @@
+#ifndef KF_APPLIED_KALMAN_FILTER_H
+#define KF_APPLIED_KALMAN_FILTER_H
+
 #include <Eigen/Dense>
 
 #include "utils/ParamsManager.h"
@@ -65,3 +68,5 @@ class KalmanFilter {
   double dt_ = 0;
   double timestamp_ = 0;
 };
+
+#endif  // KF_APPLIED_KALMAN_FILTER_H

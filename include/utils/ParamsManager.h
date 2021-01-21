@@ -14,11 +14,19 @@ class ParamsManager {
   ParamsManager(ros::NodeHandle& nh);
   ~ParamsManager() = default;
 
+  double rate_gt;
+  double rate_gps;
+  double rate_radar;
+
   std::string frame_id;
   std::string topic_gt;
-  std::string topic_gps;
-  std::string topic_radar;
+  std::string topic_gt_path;
   std::string topic_estimation;
+  std::string topic_estimation_path;
+  std::string topic_gps;
+  std::string topic_gps_path;
+  std::string topic_radar;
+
   // Noise vector
   Eigen::Vector3d gps_noise = {0.15, 0.15, 0.05};
 

@@ -68,10 +68,13 @@ include_directories(
 
 set(SIM "simulation")
 
+#####################
 ## SIMULATION library
 add_library(${SIM}
         src/${SIM}_node.cpp
-        src/simulation/simulation.cpp
+        src/simulation/SimManager.cpp
+        src/simulation/StateManager.cpp
+        src/utils/ParamsManager.cpp
         )
 
 ## Declare executable
@@ -85,7 +88,7 @@ target_link_libraries(${SIM}_node
         ${catkin_LIBRARIES}
         )
 
-
+#####################
 ## MAIN library
 add_library(${PROJECT_NAME}
         src/${PROJECT_NAME}_node.cpp

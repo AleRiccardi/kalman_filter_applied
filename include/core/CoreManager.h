@@ -1,3 +1,6 @@
+#ifndef KF_APPLIED_CORE_MANAGER_H
+#define KF_APPLIED_CORE_MANAGER_H
+
 #include <geometry_msgs/PoseStamped.h>
 #include <nav_msgs/Path.h>
 
@@ -70,3 +73,5 @@ class CoreManager {
   std::vector<geometry_msgs::PoseStamped> poses_;
   std::vector<geometry_msgs::PoseStamped> poses_gt_;
 };
+
+#endif  // KF_APPLIED_CORE_MANAGER_H

@@ -3,7 +3,11 @@
 
     <!-- general -->
     <param name="wait_mode" type="double" value="1"/>
-    <rosparam param="measurements">[gt, gps, radar]</rosparam>
+
+    <param name="rate_gt" type="double" value="5"/>
+    <param name="rate_gps" type="double" value="5"/>
+    <param name="rate_radar" type="double" value="5"/>
+
 
     <!-- bag topics -->
     <param name="frame_id" type="string" value="global"/>

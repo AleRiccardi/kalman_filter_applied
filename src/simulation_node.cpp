@@ -3,15 +3,17 @@
 #include <cstdio>
 #include <iostream>
 
-#include "simulation/simulation.h"
+#include "simulation/SimManager.h"
+#include "utils/ParamsManager.h"
 
 int main(int argc, char** argv) {
   ros::init(argc, argv, "simulation_node");
   ros::NodeHandle nh("~");
   ros::Time::init();
 
-  auto* sim = new Simulation(nh);
-  ros::Duration dur(sim->dt);
+  auto* params = new ParamsManager(nh);
+  auto* sim = new SimManager(nh, params);
+  ros::Duration dur(0.1);  // faster than the measurements
 
   while (ros::ok()) {
     sim->user_control();

@@ -1,3 +1,6 @@
+#ifndef KF_APPLIED_SIM_MANAGER_H
+#define KF_APPLIED_SIM_MANAGER_H
+
 #include <geometry_msgs/PoseStamped.h>
 #include <nav_msgs/Odometry.h>
 #include <nav_msgs/Path.h>
@@ -9,6 +12,9 @@
 #include <iostream>
 #include <string>
 #include <vector>
+
+#include "simulation/StateManager.h"
+#include "utils/ParamsManager.h"
 
 struct Character {
   char value;
@@ -28,14 +34,14 @@ class Command {
   static Character record_;
 };
 
-class Simulation {
+class SimManager {
  public:
-  Simulation(ros::NodeHandle nh);
-  ~Simulation() = default;
+  SimManager(ros::NodeHandle nh, ParamsManager* params);
+  ~SimManager() = default;
 
   bool user_control();
-  void propagate();
   void pub_state();
+  void propagate();
   void start_record();
   void stop_record();
   void kill();
@@ -43,22 +49,27 @@ class Simulation {
   double dt = 0.2;
 
  private:
-  void apply_noise();
+  StateManager* state_m_;
 
   rosbag::Bag bag_;
+  ParamsManager* params_;
+
+  ros::Publisher pub_gt_pose_;
+  ros::Publisher pub_gt_path_;
+  ros::Publisher pub_gps_pose_;
+  ros::Publisher pub_gps_path_;
+  ros::Publisher pub_radar_pose_;
+
+  std::vector<geometry_msgs::PoseStamped> poses_gt_;
+  std::vector<geometry_msgs::PoseStamped> poses_gps_;
 
   const double ACC = 0.05;
-  Eigen::Matrix<double, 6, 6> _F;
-  Eigen::Vector3d noise_gps_;
+  Eigen::Matrix<double, 3, 1> acceleration_;
 
-  int poses_count_ = 0;
-  Eigen::Matrix<double, 6, 1> state_;
-  Eigen::Matrix<double, 6, 1> state_gps_;
-  Eigen::Matrix<double, 3, 1> acc_;
-
-  ros::Publisher pub_gt_pose_, pub_gt_path_, pub_gps_pose_, pub_gps_path_;
-  std::vector<geometry_msgs::PoseStamped> poses_gps_;
-  std::vector<geometry_msgs::PoseStamped> poses_noise_;
+  int gt_count_ = 0;
+  int gps_count_ = 0;
 
   bool recording_;
 };
+
+#endif  // KF_APPLIED_SIM_MANAGER_H
