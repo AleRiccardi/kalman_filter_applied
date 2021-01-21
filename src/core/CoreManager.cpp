@@ -98,7 +98,7 @@ void CoreManager::Display() {
 
   pub_pose_.publish(pose);
 
-  // =======================================================
+  // ---------------------------------------------------------------------------
 
   // Create pose (note we use the bag time)
   geometry_msgs::PoseStamped pose_gt;
@@ -111,8 +111,7 @@ void CoreManager::Display() {
 
   pub_pose_gt_.publish(pose_gt);
 
-  //=========================================================
-  //=========================================================
+  // ---------------------------------------------------------------------------
 
   // Append to our pose vectors
   poses_.push_back(pose);
@@ -131,7 +130,7 @@ void CoreManager::Display() {
   }
   pub_path_.publish(arr_poses);
 
-  // =======================================================
+  // ---------------------------------------------------------------------------
 
   nav_msgs::Path arr_poses_gt;
   arr_poses_gt.header.stamp = pose_gt.header.stamp;

@@ -67,13 +67,13 @@ void KalmanFilter::Correction(Eigen::Matrix<double, 3, 1> gps_pose) {
   P_ = (Eigen::MatrixXd::Identity(9, 9) * K * H_) * P_;
 
   // Print the difference between the state and the gps
-  std::cout << "================================" << std::endl;
-  std::cout << "GPS" << std::endl;
-  std::cout << gps_pose << std::endl;
-  std::cout << "---------------------" << std::endl;
-  std::cout << "STATE" << std::endl;
-  std::cout << state_.topLeftCorner(3, 1) << std::endl;
-  std::cout << "================================" << std::endl << std::endl;
+  // std::cout << "================================" << std::endl;
+  // std::cout << "GPS" << std::endl;
+  // std::cout << gps_pose << std::endl;
+  // std::cout << "---------------------" << std::endl;
+  // std::cout << "STATE" << std::endl;
+  // std::cout << state_.topLeftCorner(3, 1) << std::endl;
+  // std::cout << "================================" << std::endl << std::endl;
 }
 
 void KalmanFilter::UpdateF(double timestamp) {
