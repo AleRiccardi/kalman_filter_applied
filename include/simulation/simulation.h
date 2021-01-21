@@ -33,12 +33,12 @@ class Simulation {
   Simulation(ros::NodeHandle nh);
   ~Simulation() = default;
 
-  bool UserControl();
+  bool user_control();
   void propagate();
-  void PubState();
-  void StartRecord();
-  void StopRecord();
-  void Kill();
+  void pub_state();
+  void start_record();
+  void stop_record();
+  void kill();
 
   double dt = 0.2;
 
@@ -49,15 +49,15 @@ class Simulation {
 
   const double ACC = 0.05;
   Eigen::Matrix<double, 6, 6> _F;
-  Eigen::Vector3d gps_noise_;
+  Eigen::Vector3d noise_gps_;
 
   int poses_count_ = 0;
   Eigen::Matrix<double, 6, 1> state_;
-  Eigen::Matrix<double, 6, 1> state_noise_;
+  Eigen::Matrix<double, 6, 1> state_gps_;
   Eigen::Matrix<double, 3, 1> acc_;
 
-  ros::Publisher pub_pose_gt_, pub_path_gt_, pub_pose_noise_, pub_path_noise_;
-  std::vector<geometry_msgs::PoseStamped> poses_;
+  ros::Publisher pub_gt_pose_, pub_gt_path_, pub_gps_pose_, pub_gps_path_;
+  std::vector<geometry_msgs::PoseStamped> poses_gps_;
   std::vector<geometry_msgs::PoseStamped> poses_noise_;
 
   bool recording_;

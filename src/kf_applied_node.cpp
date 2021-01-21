@@ -41,15 +41,6 @@ int main(int argc, char** argv) {
 
   // ---------------------------------------------------------------------------
 
-  // GPS pose
-  std::string topic_pose;
-  nh.param<std::string>("topic_pose_gps", topic_pose, "/kf_applied/pose_noise");
-  ROS_INFO("topic pose is: %s", topic_pose.c_str());
-  // Ground truth pose
-  std::string topic_pose_gt;
-  nh.param<std::string>("topic_pose_gt", topic_pose_gt, "/kf_applied/pose_gt");
-  ROS_INFO("topic pose GT is: %s", topic_pose_gt.c_str());
-
   // Location of the ROS bag we want to read in
   std::string path_to_bag;
   nh.param<std::string>("path_bag", path_to_bag, "");
@@ -92,7 +83,7 @@ int main(int argc, char** argv) {
 
   // Check to make sure we have data to play
   if (view.size() == 0) {
-    ROS_ERROR("No messages to play on specified topics.  Exiting.");
+    ROS_ERROR("No messages to play on specified topics. Exiting.");
     ros::shutdown();
     return EXIT_FAILURE;
   }
@@ -102,11 +93,12 @@ int main(int argc, char** argv) {
     // If ros wants us to stop, break out
     if (!ros::ok()) break;
 
-    // Handle Pose (GPS) measurement
+    // Handle Pose (GT, GPS) measurement
     geometry_msgs::PoseStamped::ConstPtr pose_m =
         m.instantiate<geometry_msgs::PoseStamped>();
 
-    if (pose_m != nullptr && m.getTopic() == topic_pose) {
+    // GT measurement
+    if (pose_m != nullptr && m.getTopic() == params->topic_gt) {
       // convert into correct format
       // int seq = (*pose_noise).header.seq; // unused
       double timem = (*pose_m).header.stamp.toSec();
@@ -115,11 +107,11 @@ int main(int argc, char** argv) {
       pose(1) = (*pose_m).pose.position.y;
       pose(2) = (*pose_m).pose.position.z;
 
-      core->FeedMeasurementGPS(timem, pose);
-      core->StateEstimation();
+      core->feed_m_gt(timem, pose);
     }
 
-    if (pose_m != nullptr && m.getTopic() == topic_pose_gt) {
+    // GPS measurement
+    if (pose_m != nullptr && m.getTopic() == params->topic_gps) {
       // convert into correct format
       // int seq = (*pose_noise).header.seq; // unused
       double timem = (*pose_m).header.stamp.toSec();
@@ -128,9 +120,16 @@ int main(int argc, char** argv) {
       pose(1) = (*pose_m).pose.position.y;
       pose(2) = (*pose_m).pose.position.z;
 
-      core->FeedGT(timem, pose);
+      core->feed_m_gps(timem, pose);
+      core->state_estimation();
     }
-    core->Display();
+
+    // TODO: implement
+    if (pose_m != nullptr && m.getTopic() == params->topic_radar) {
+      // continue;
+    }
+
+    core->display();
   }
 
   return 0;

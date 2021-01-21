@@ -25,26 +25,26 @@ class KalmanFilter {
   /**
    * @brief Initialize the state and timestamp.
    */
-  void Initialize(const GPSDATA& gps1, const GPSDATA& gps2);
+  void initialize(const GPSDATA& gps1, const GPSDATA& gps2);
 
   /**
    * @brief Propagation step.
    *
    */
-  void Propagation(double timestamp);
+  void propagation(double timestamp);
 
   /**
    * @brief Correction step.
    *
    */
-  void Correction(Eigen::Matrix<double, 3, 1> gps_pose);
+  void correction(Eigen::Matrix<double, 3, 1> gps_pose);
 
   Eigen::Matrix<double, 3, 1> GetState();
 
  private:
-  void UpdateF(double timestamp);
+  void update_F(double timestamp);
 
-  void UpdateH();
+  void update_H();
 
   // Parameters system manager
   ParamsManager* params_;
@@ -57,7 +57,7 @@ class KalmanFilter {
   Eigen::Matrix<double, 9, 9> F_;
   // Observation Matrix
   Eigen::Matrix<double, 9, 9> H_;
-  // Propagation covariance noise
+  // propagation covariance noise
   Eigen::Matrix<double, 9, 9> D_;
   // Observation covariance noise
   Eigen::Matrix<double, 9, 9> R_;

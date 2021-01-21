@@ -1,5 +1,21 @@
 <launch>
-  <node name="simulation_node" pkg="kf_applied" type="simulation_node" output="screen" clear_params="true" required="true" />
-  
-  <node type="rviz" name="rviz" pkg="rviz" args="-d $(find kf_applied)/rviz/simulation.rviz" /> 
+  <node name="simulation_node" pkg="kf_applied" type="simulation_node" output="screen" clear_params="true" required="true">
+
+    <!-- general -->
+    <param name="wait_mode" type="double" value="1"/>
+    <rosparam param="measurements">[gt, gps, radar]</rosparam>
+
+    <!-- bag topics -->
+    <param name="frame_id" type="string" value="global"/>
+    <param name="topic_gt" type="string" value="/kf_applied/gt"/>
+    <param name="topic_gps" type="string" value="/kf_applied/gps"/>
+    <param name="topic_radar" type="string" value="/kf_applied/radar"/>
+
+    <param name="topic_estimation" type="string" value="/kf_applied/estimation"/>
+
+  </node>
+
+
+
+  <node type="rviz" name="rviz" pkg="rviz" args="-d $(find kf_applied)/rviz/simulation.rviz" />
 </launch>

@@ -16,13 +16,13 @@ KalmanFilter::KalmanFilter(ParamsManager* params) {
   // Init the Observation matrix
   H_.setIdentity();
 
-  // Init Propagation covariance noise
+  // Init propagation covariance noise
   D_.setZero();
   D_.topLeftCorner(3, 3) = Eigen::MatrixXd::Identity(3, 3) * std::pow(0.1, 2);
   std::cout << "D" << std::endl;
   std::cout << D_ << std::endl;
 
-  // Init Propagation covariance noise
+  // Init propagation covariance noise
   R_.setZero();
   R_(0, 0) = params->gps_noise[0];
   R_(1, 1) = params->gps_noise[1];
@@ -31,7 +31,7 @@ KalmanFilter::KalmanFilter(ParamsManager* params) {
   std::cout << R_ << std::endl;
 }
 
-void KalmanFilter::Initialize(const GPSDATA& gps1, const GPSDATA& gps2) {
+void KalmanFilter::initialize(const GPSDATA& gps1, const GPSDATA& gps2) {
   // Current timestamp
   timestamp_ = gps1.timestamp;
   // Time offset between two GPS measurements
@@ -40,9 +40,9 @@ void KalmanFilter::Initialize(const GPSDATA& gps1, const GPSDATA& gps2) {
   state_.block<3, 1>(0, 0) << gps1.pose;
 }
 
-void KalmanFilter::Propagation(double timestamp) {
+void KalmanFilter::propagation(double timestamp) {
   // Update F with the correct time offset (dt)
-  UpdateF(timestamp);
+  update_F(timestamp);
 
   // Propagate the state
   state_ = F_ * state_;
@@ -50,7 +50,7 @@ void KalmanFilter::Propagation(double timestamp) {
   P_ = F_ * P_ * F_.transpose() + D_;
 }
 
-void KalmanFilter::Correction(Eigen::Matrix<double, 3, 1> gps_pose) {
+void KalmanFilter::correction(Eigen::Matrix<double, 3, 1> gps_pose) {
   Eigen::Matrix<double, 9, 1> residual;
   Eigen::Matrix<double, 9, 9> S;
   Eigen::Matrix<double, 9, 9> K;
@@ -67,16 +67,16 @@ void KalmanFilter::Correction(Eigen::Matrix<double, 3, 1> gps_pose) {
   P_ = (Eigen::MatrixXd::Identity(9, 9) * K * H_) * P_;
 
   // Print the difference between the state and the gps
-  // std::cout << "================================" << std::endl;
-  // std::cout << "GPS" << std::endl;
-  // std::cout << gps_pose << std::endl;
-  // std::cout << "---------------------" << std::endl;
-  // std::cout << "STATE" << std::endl;
-  // std::cout << state_.topLeftCorner(3, 1) << std::endl;
-  // std::cout << "================================" << std::endl << std::endl;
+  std::cout << "================================" << std::endl;
+  std::cout << "GPS" << std::endl;
+  std::cout << gps_pose << std::endl;
+  std::cout << "---------------------" << std::endl;
+  std::cout << "STATE" << std::endl;
+  std::cout << state_.topLeftCorner(3, 1) << std::endl;
+  std::cout << "================================" << std::endl << std::endl;
 }
 
-void KalmanFilter::UpdateF(double timestamp) {
+void KalmanFilter::update_F(double timestamp) {
   // Update time offset
   dt_ = timestamp - timestamp_;
   // Update current time
@@ -90,7 +90,7 @@ void KalmanFilter::UpdateF(double timestamp) {
   F_.block<3, 3>(0, 6) << Eigen::MatrixXd::Identity(3, 3) *
                               (0.5 * std::pow(dt_, 2));
 }
-void KalmanFilter::UpdateH() {}
+void KalmanFilter::update_H() {}
 
 Eigen::Matrix<double, 3, 1> KalmanFilter::GetState() {
   return state_.topLeftCorner(3, 1);

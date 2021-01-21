@@ -23,36 +23,36 @@ class CoreManager {
   ~CoreManager() = default;
 
   /**
-   * @brief Store incoming gps measurements.
+   * @brief Store incoming GPS measurement.
    *
-   * @param timestamp Timestamp of imu reading
+   * @param timestamp Timestamp of gps reading
    * @param pose 3D pose.
    */
-  void FeedMeasurementGPS(double timestamp, Eigen::Vector3d pose);
+  void feed_m_gps(double timestamp, Eigen::Vector3d pose);
 
   /**
-   * @brief Store Ground Truth pose.
+   * @brief Store Ground Truth measurement.
    *
-   * @param timestamp Timestamp of imu reading
+   * @param timestamp Timestamp of gt measurement.
    * @param pose 3D pose.
    */
-  void FeedGT(double timestamp, Eigen::Vector3d pose);
+  void feed_m_gt(double timestamp, Eigen::Vector3d pose);
 
   /**
    * @brief Estimate the state given the collected measurements.
    *
    */
-  void StateEstimation();
+  void state_estimation();
 
   /**
    * @brief Display the current state.
    *
    */
-  void Display();
+  void display();
 
  private:
-  bool Initialize();
-  bool PopMeasurement(GPSDATA& gps);
+  bool initialize();
+  bool pop_measurement(GPSDATA& gps);
 
   ParamsManager* params_;
   KalmanFilter* kf_;
@@ -65,7 +65,8 @@ class CoreManager {
   bool is_initialized_ = false;
 
   int poses_count_ = 0;
-  ros::Publisher pub_pose_, pub_path_, pub_pose_gt_, pub_path_gt_;
+  ros::Publisher pub_estimation_, pub_estimation_path_, pub_gt_pose_,
+      pub_gt_path;
   std::vector<geometry_msgs::PoseStamped> poses_;
   std::vector<geometry_msgs::PoseStamped> poses_gt_;
 };

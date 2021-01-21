@@ -1,6 +1,6 @@
 #include <ros/ros.h>
-#include <cstdio>
 
+#include <cstdio>
 #include <iostream>
 
 #include "simulation/simulation.h"
@@ -14,15 +14,15 @@ int main(int argc, char** argv) {
   ros::Duration dur(sim->dt);
 
   while (ros::ok()) {
-    sim->UserControl();
+    sim->user_control();
     sim->propagate();
-    sim->PubState();
+    sim->pub_state();
 
     ros::spinOnce();
     dur.sleep();
   }
 
-  sim->Kill();
+  sim->kill();
 
   printf("\nDone.\n");
   return 0;
