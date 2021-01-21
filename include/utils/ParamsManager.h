@@ -28,7 +28,11 @@ class ParamsManager {
   std::string topic_radar;
 
   // Noise vector
-  Eigen::Vector3d gps_noise = {0.15, 0.15, 0.05};
+  Eigen::Vector3d noise_gps = {0, 0, 0};
+  Eigen::Vector3d noise_radar = {0, 0, 0};
+
+  Eigen::Matrix<double, 3, 1> init_pose;
+  Eigen::Matrix<double, 3, 1> init_pose_radar;
 
   /**
    * @brief This function will print out all noise parameters loaded.
@@ -37,7 +41,7 @@ class ParamsManager {
    */
   void PrintNoise() const {
     printf(GREEN "\t- NOISE PARAMETERS - \n" RESET);
-    std::cout << gps_noise << std::endl;
+    std::cout << noise_gps << std::endl;
   }
 
  private:

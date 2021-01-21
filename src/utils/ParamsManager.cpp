@@ -11,12 +11,37 @@ ParamsManager::ParamsManager(ros::NodeHandle& nh) {
   nh.param<double>("rate_radar", rate_radar, 5);
 
   // ---------------------------------------------------------------------------
-  // GPS Noise Matrix
+  // GPS noise vector
 
-  std::vector<double> gps_noise_v = {gps_noise(0), gps_noise(1), gps_noise(2)};
-  nh.param<std::vector<double>>("gps_noise", gps_noise_v, gps_noise_v);
-  assert(gps_noise_v.size() == 3);
-  gps_noise << gps_noise_v[0], gps_noise_v[1], gps_noise_v[2];
+  std::vector<double> noise_gps_v = {noise_gps(0), noise_gps(1), noise_gps(2)};
+  nh.param<std::vector<double>>("noise_gps", noise_gps_v, noise_gps_v);
+  noise_gps << noise_gps_v[0], noise_gps_v[1], noise_gps_v[2];
+
+  // ---------------------------------------------------------------------------
+  // Radar noise vector
+
+  std::vector<double> noise_radar_v = {noise_radar(0), noise_radar(1),
+                                       noise_radar(2)};
+  nh.param<std::vector<double>>("noise_radar", noise_radar_v, noise_radar_v);
+  noise_radar << noise_radar_v[0], noise_radar_v[1], noise_radar_v[2];
+
+  // ---------------------------------------------------------------------------
+  // Initial pose
+
+  std::vector<double> init_pose_v = {0, 0, 0};
+  nh.param<std::vector<double>>("init_pose", init_pose_v, init_pose_v);
+  assert(init_pose_v.size() == 3);
+  init_pose << init_pose_v[0], init_pose_v[1], init_pose_v[2];
+
+  // ---------------------------------------------------------------------------
+  // Initial pose of the radar
+
+  std::vector<double> init_pose_radar_v = {0, 0, 0};
+  nh.param<std::vector<double>>("init_pose_radar", init_pose_radar_v,
+                                init_pose_radar_v);
+  assert(init_pose_radar_v.size() == 3);
+  init_pose_radar << init_pose_radar_v[0], init_pose_radar_v[1],
+      init_pose_radar_v[2];
 
   // ---------------------------------------------------------------------------
   // ROS TOPICS (& replated)

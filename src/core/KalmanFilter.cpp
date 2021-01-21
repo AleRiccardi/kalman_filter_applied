@@ -24,9 +24,9 @@ KalmanFilter::KalmanFilter(ParamsManager* params) {
 
   // Init propagation covariance noise
   R_.setZero();
-  R_(0, 0) = params->gps_noise[0];
-  R_(1, 1) = params->gps_noise[1];
-  R_(2, 2) = params->gps_noise[2];
+  R_(0, 0) = params->noise_gps[0];
+  R_(1, 1) = params->noise_gps[1];
+  R_(2, 2) = params->noise_gps[2];
   std::cout << "R" << std::endl;
   std::cout << R_ << std::endl;
 }
