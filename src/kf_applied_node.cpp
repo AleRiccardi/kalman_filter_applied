@@ -1,5 +1,6 @@
 #include <core/CoreManager.h>
 #include <geometry_msgs/PoseStamped.h>
+#include <geometry_msgs/Vector3Stamped.h>
 #include <ros/ros.h>
 #include <rosbag/bag.h>
 #include <rosbag/view.h>
@@ -97,15 +98,19 @@ int main(int argc, char** argv) {
     geometry_msgs::PoseStamped::ConstPtr pose_m =
         m.instantiate<geometry_msgs::PoseStamped>();
 
+    // Handle vector RADAR measurement
+    geometry_msgs::Vector3Stamped::ConstPtr vect_m =
+        m.instantiate<geometry_msgs::Vector3Stamped>();
+
     // GT measurement
     if (pose_m != nullptr && m.getTopic() == params->topic_gt) {
       // convert into correct format
       // int seq = (*pose_noise).header.seq; // unused
       double timem = (*pose_m).header.stamp.toSec();
       Eigen::Vector3d pose;
-      pose(0) = (*pose_m).pose.position.x;
-      pose(1) = (*pose_m).pose.position.y;
-      pose(2) = (*pose_m).pose.position.z;
+      pose(0, 0) = (*pose_m).pose.position.x;
+      pose(1, 0) = (*pose_m).pose.position.y;
+      pose(2, 0) = (*pose_m).pose.position.z;
 
       core->feed_m_gt(timem, pose);
     }
@@ -116,19 +121,27 @@ int main(int argc, char** argv) {
       // int seq = (*pose_noise).header.seq; // unused
       double timem = (*pose_m).header.stamp.toSec();
       Eigen::Vector3d pose;
-      pose(0) = (*pose_m).pose.position.x;
-      pose(1) = (*pose_m).pose.position.y;
-      pose(2) = (*pose_m).pose.position.z;
+      pose(0, 0) = (*pose_m).pose.position.x;
+      pose(1, 0) = (*pose_m).pose.position.y;
+      pose(2, 0) = (*pose_m).pose.position.z;
 
       core->feed_m_gps(timem, pose);
-      core->state_estimation();
     }
 
-    // TODO: implement
-    if (pose_m != nullptr && m.getTopic() == params->topic_radar) {
-      // continue;
+    // RADAR measurement
+    if (vect_m != nullptr && m.getTopic() == params->topic_radar) {
+      // convert into correct format
+      // int seq = (*pose_noise).header.seq; // unused
+      double timem = (*vect_m).header.stamp.toSec();
+      Eigen::Vector3d beam;
+      beam(0, 0) = (*vect_m).vector.x;
+      beam(1, 0) = (*vect_m).vector.y;
+      beam(2, 0) = (*vect_m).vector.z;
+
+      core->feed_m_radar(timem, beam);
     }
 
+    core->state_estimation();
     core->display();
   }
 

@@ -22,20 +22,33 @@ CoreManager::CoreManager(ros::NodeHandle nh, ParamsManager* params) {
   ROS_INFO("Publishing: %s", pub_gt_path.getTopic().c_str());
 }
 
-void CoreManager::feed_m_gps(double timestamp, Eigen::Vector3d pose) {
-  GPSDATA data;
+void CoreManager::feed_m_gt(double timestamp, Eigen::Vector3d pose) {
+  GPS_DATA data;
   data.timestamp = timestamp;
   data.pose = std::move(pose);
-
-  gps_data_.emplace_back(data);
+  gt_data_.emplace_back(data);
+  // Update current time
+  curr_time_ = timestamp;
 }
 
-void CoreManager::feed_m_gt(double timestamp, Eigen::Vector3d pose) {
-  GPSDATA data;
+void CoreManager::feed_m_gps(double timestamp, Eigen::Vector3d pose) {
+  GPS_DATA data;
   data.timestamp = timestamp;
   data.pose = std::move(pose);
+  gps_data_.emplace_back(data);
 
-  gt_data_.emplace_back(data);
+  // Update current time
+  curr_time_ = timestamp;
+}
+
+void CoreManager::feed_m_radar(double timestamp, Eigen::Vector3d beam) {
+  RADAR_DATA data;
+  data.timestamp = timestamp;
+  data.beam = std::move(beam);
+  radar_data_.emplace_back(data);
+
+  // Update current time
+  curr_time_ = timestamp;
 }
 
 void CoreManager::state_estimation() {
@@ -44,14 +57,23 @@ void CoreManager::state_estimation() {
     return;
   }
 
-  GPSDATA gps;
-  if (!pop_measurement(gps)) {
-    printf(YELLOW "No GPS measurements stored \n" RESET);
-    return;
-  }
+  // std::vector<GPS_DATA> gps_v;
+  // pop_gps(gps_v);
+  // if (!gps_v.empty()) {
+  //   for (uint i = 0; i < gps_v.size(); i++) {
+  //     // kf_->propagation(gps_v.at(i).timestamp);
+  //     kf_->correction_gps(gps_v.at(i));
+  //   }
+  // }
 
-  kf_->propagation(gps.timestamp);
-  kf_->correction(gps.pose);
+  std::vector<RADAR_DATA> radar_v;
+  pop_radar(radar_v);
+  if (!radar_v.empty()) {
+    for (uint i = 0; i < radar_v.size(); i++) {
+      kf_->propagation(radar_v.at(i).timestamp);
+      kf_->correction_radar(radar_v.at(i));
+    }
+  }
 }
 
 bool CoreManager::initialize() {
@@ -60,8 +82,8 @@ bool CoreManager::initialize() {
     return false;
   }
 
-  GPSDATA gps1 = gps_data_[0];
-  GPSDATA gps2 = gps_data_[1];
+  GPS_DATA gps1 = gps_data_[0];
+  GPS_DATA gps2 = gps_data_[1];
   // Erase the first element
   gps_data_.erase(gps_data_.begin());
 
@@ -70,13 +92,24 @@ bool CoreManager::initialize() {
   return true;
 }
 
-bool CoreManager::pop_measurement(GPSDATA& gps) {
+bool CoreManager::pop_gps(std::vector<GPS_DATA>& gps_v) {
   if (gps_data_.empty()) {
     return false;
   }
+  std::cout << gps_data_.size() << std::endl;
 
-  gps = gps_data_[0];
+  gps_v.emplace_back(gps_data_[0]);
   gps_data_.erase(gps_data_.begin());
+  return true;
+}
+
+bool CoreManager::pop_radar(std::vector<RADAR_DATA>& radar_v) {
+  if (radar_data_.empty()) {
+    return false;
+  }
+
+  radar_v.emplace_back(radar_data_[0]);
+  radar_data_.erase(radar_data_.begin());
   return true;
 }
 
@@ -91,7 +124,7 @@ void CoreManager::display() {
   // Create pose (note we use the bag time)
   geometry_msgs::PoseStamped pose;
   pose.header.stamp = ros::Time::now();
-  pose.header.seq = poses_count_;
+  pose.header.seq = count_poses_;
   pose.header.frame_id = params_->frame_id;
   pose.pose.position.x = state(0, 0);
   pose.pose.position.y = state(1, 0);
@@ -104,7 +137,7 @@ void CoreManager::display() {
   // Create pose (note we use the bag time)
   geometry_msgs::PoseStamped pose_gt;
   pose_gt.header.stamp = ros::Time::now();
-  pose_gt.header.seq = poses_count_;
+  pose_gt.header.seq = count_poses_;
   pose_gt.header.frame_id = params_->frame_id;
   pose_gt.pose.position.x = gt(0, 0);
   pose_gt.pose.position.y = gt(1, 0);
@@ -123,7 +156,7 @@ void CoreManager::display() {
   // NOTE: https://github.com/ros-visualization/rviz/issues/1107
   nav_msgs::Path arr_poses;
   arr_poses.header.stamp = pose.header.stamp;
-  arr_poses.header.seq = poses_count_;
+  arr_poses.header.seq = count_poses_;
   arr_poses.header.frame_id = params_->frame_id;
   for (size_t i = 0; i < poses_.size();
        i += std::floor(poses_.size() / 16384.0) + 1) {
@@ -135,7 +168,7 @@ void CoreManager::display() {
 
   nav_msgs::Path arr_poses_gt;
   arr_poses_gt.header.stamp = pose_gt.header.stamp;
-  arr_poses_gt.header.seq = poses_count_;
+  arr_poses_gt.header.seq = count_poses_;
   arr_poses_gt.header.frame_id = params_->frame_id;
   for (size_t i = 0; i < poses_gt_.size();
        i += std::floor(poses_gt_.size() / 16384.0) + 1) {
@@ -144,5 +177,5 @@ void CoreManager::display() {
   pub_gt_path.publish(arr_poses_gt);
 
   // Move forward in time
-  poses_count_++;
+  count_poses_++;
 }

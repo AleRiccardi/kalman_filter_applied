@@ -10,18 +10,20 @@
 #include <vector>
 
 #include "utils/ParamsManager.h"
+#include "utils/types.h"
 
 class StateManager {
  public:
   StateManager(ros::NodeHandle nh, ParamsManager* params);
   ~StateManager() = default;
 
-  void propagate(Eigen::Matrix<double, 3, 1> acceleration);
+  void propagate(Eigen::Vector3d acceleration);
   void generate_gps();
   void generate_radar();
 
-  Eigen::Matrix<double, 3, 1> get_gt();
-  Eigen::Matrix<double, 3, 1> get_gps();
+  Eigen::Vector3d get_gt();
+  Eigen::Vector3d get_gps();
+  Eigen::Vector3d get_radar();
 
   double dt = 0.2;
 
@@ -34,10 +36,10 @@ class StateManager {
 
   int poses_count_ = 0;
   Eigen::Matrix<double, 9, 1> state_;
-  Eigen::Matrix<double, 3, 1> state_gps_;
-  Eigen::Matrix<double, 3, 1> state_radar_;
+  Eigen::Vector3d state_gps_;
+  Eigen::Vector3d state_radar_;
 
-  Eigen::Matrix<double, 3, 1> pose_radar_;
+  Eigen::Vector3d location_radar_;
 };
 
 #endif  // KF_APPLIED_STATE_MANAGER_H

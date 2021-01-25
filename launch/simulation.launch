@@ -1,21 +1,21 @@
 <launch>
-  <node name="simulation_node" pkg="kf_applied" type="simulation_node" output="screen" clear_params="true" required="true">
-
+  <node name="simulation_node" pkg="kf_applied" type="simulation_node" respawn="false" output="screen">
+    <!-- launch-prefix="gdb -ex run"> -->
     <!-- general -->
     <param name="wait_mode" type="double" value="1"/>
 
     <!-- Objs position -->
     <rosparam param="init_pose">[0, 0, 0]</rosparam>
-    <rosparam param="init_pose_radar">[100, 0, 0]</rosparam>
+    <rosparam param="init_pose_radar">[10, 0, 0]</rosparam>
 
     <!-- Sensor noise -->
     <rosparam param="noise_gps">[0.15, 0.15, 0.05]</rosparam>
-    <rosparam param="noise_radar">[10, 0.1, 0]</rosparam>
+    <rosparam param="noise_radar">[0.15, 0.001, 0.001]</rosparam>
 
-    <!-- Sensors rate -->
-    <param name="rate_gt" type="double" value="5"/>
-    <param name="rate_gps" type="double" value="5"/>
-    <param name="rate_radar" type="double" value="5"/>
+    <!-- Sensors frequency -->
+    <param name="frequency_gt" type="double" value="5"/>
+    <param name="frequency_gps" type="double" value="1"/>
+    <param name="frequency_radar" type="double" value="5"/>
 
     <!-- bag topics -->
     <param name="frame_id" type="string" value="global"/>

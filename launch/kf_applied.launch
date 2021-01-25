@@ -5,24 +5,29 @@
 
     <!-- general -->
     <param name="wait_mode" type="double" value="1"/>
-    <rosparam param="measurements">[gt, gps, radar]</rosparam>
+
+    <!-- Objs position -->
+    <rosparam param="init_pose">[0, 0, 0]</rosparam>
+    <rosparam param="init_pose_radar">[10, 0, 0]</rosparam>
+
+    <!-- Sensor noise -->
+    <rosparam param="noise_gps">[0.15, 0.15, 0.05]</rosparam>
+    <rosparam param="noise_radar">[0.15, 0.001, 0.001]</rosparam>
+
+    <!-- Sensors frequency -->
+    <param name="frequency_gt" type="double" value="5"/>
+    <param name="frequency_gps" type="double" value="1"/>
+    <param name="frequency_radar" type="double" value="5"/>
 
     <!-- bag topics -->
     <param name="frame_id" type="string" value="global"/>
-
     <param name="topic_gt" type="string" value="/kf_applied/gt"/>
-    <param name="topic_gt_path" type="string" value="/kf_applied/gt_path"/>
-    <param name="topic_estimation" type="string" value="/kf_applied/estimation"/>
-    <param name="topic_estimation_path" type="string" value="/kf_applied/estimation_path"/>
-
     <param name="topic_gps" type="string" value="/kf_applied/gps"/>
     <param name="topic_radar" type="string" value="/kf_applied/radar"/>
+    <param name="topic_estimation" type="string" value="/kf_applied/estimation"/>
 
     <!-- bag parameters -->
-    <param name="path_bag" type="string" value="/home/alericcardi/Workspaces/ws_kf/src/kalman_filter_applied/data/1611219708.bag"/>
-
-    <!-- sensor noise values / update -->
-    <rosparam param="gps_noise">[0.15, 0.15, 0.05]</rosparam>
+    <param name="path_bag" type="string" value="/home/alericcardi/Workspaces/ws_kf/src/kalman_filter_applied/data/1611587974.bag"/>
 
   </node>
 

@@ -13,7 +13,7 @@ StateManager::StateManager(ros::NodeHandle nh, ParamsManager* params) {
   // Initial radar state
   state_radar_.setZero();
   // Initial radar pose
-  pose_radar_ << params_->init_pose_radar;
+  location_radar_ << params_->init_pose_radar;
 
   // Set gps noise
   noise_gps_ = params_->noise_gps;
@@ -32,7 +32,7 @@ StateManager::StateManager(ros::NodeHandle nh, ParamsManager* params) {
   F_.block<1, 9>(8, 0) << 0, 0, 0, 0, 0, 0, 0, 0, 1;
 }
 
-void StateManager::propagate(Eigen::Matrix<double, 3, 1> acceleration) {
+void StateManager::propagate(Eigen::Vector3d acceleration) {
   // Set state acceleration
   state_.tail(3) = acceleration;
 
@@ -73,15 +73,21 @@ void StateManager::generate_radar() {
   noise(1) = noise_radar_(1) * rands(1);
   noise(2) = noise_radar_(2) * rands(2);
 
-  state_radar_(0, 0) =
-      std::pow(std::pow(state_(0, 0) - pose_radar_(0, 0), 2) +
-                   std::pow(state_(1, 0) - pose_radar_(1, 0), 2),
-               0.5);
-  state_radar_(1, 0) = std::atan((state_(1, 0) - pose_radar_(0, 0)) /
-                                 (state_(0, 0) - pose_radar_(0, 0) + 0.0001));
+  // From global to local coordinates
+  double x = location_radar_(0, 0) - state_(0, 0);
+  double y = location_radar_(1, 0) - state_(1, 0);
+  double z = location_radar_(2, 0) - state_(2, 0);
 
+  // From local cartesian coordinates to local polar coordinates
+  state_radar_(0, 0) =
+      std::pow(std::pow(x, 2) + std::pow(y, 2) + std::pow(z, 2), 0.5);
+  state_radar_(1, 0) = std::acos(z / state_radar_(0, 0));
+  state_radar_(2, 0) = std::atan(y / (x + 0.0001));
+
+  // Add mesurement noise
   state_radar_ += noise;
 }
 
-Eigen::Matrix<double, 3, 1> StateManager::get_gt() { return state_.head(3); }
-Eigen::Matrix<double, 3, 1> StateManager::get_gps() { return state_gps_; }
+Eigen::Vector3d StateManager::get_gt() { return state_.head(3); }
+Eigen::Vector3d StateManager::get_gps() { return state_gps_; }
+Eigen::Vector3d StateManager::get_radar() { return state_radar_; }

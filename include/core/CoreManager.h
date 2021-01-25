@@ -26,6 +26,14 @@ class CoreManager {
   ~CoreManager() = default;
 
   /**
+   * @brief Store Ground Truth measurement.
+   *
+   * @param timestamp Timestamp of gt measurement.
+   * @param pose 3D pose.
+   */
+  void feed_m_gt(double timestamp, Eigen::Vector3d pose);
+
+  /**
    * @brief Store incoming GPS measurement.
    *
    * @param timestamp Timestamp of gps reading
@@ -34,12 +42,12 @@ class CoreManager {
   void feed_m_gps(double timestamp, Eigen::Vector3d pose);
 
   /**
-   * @brief Store Ground Truth measurement.
+   * @brief Store Radar measurement.
    *
-   * @param timestamp Timestamp of gt measurement.
-   * @param pose 3D pose.
+   * @param timestamp Timestamp of radar measurement.
+   * @param beam of the radar.
    */
-  void feed_m_gt(double timestamp, Eigen::Vector3d pose);
+  void feed_m_radar(double timestamp, Eigen::Vector3d beam);
 
   /**
    * @brief Estimate the state given the collected measurements.
@@ -55,19 +63,23 @@ class CoreManager {
 
  private:
   bool initialize();
-  bool pop_measurement(GPSDATA& gps);
+  bool pop_gps(std::vector<GPS_DATA>& gps_v);
+  bool pop_radar(std::vector<RADAR_DATA>& radar_v);
 
   ParamsManager* params_;
   KalmanFilter* kf_;
 
   // Our history of GPS messages (time, pose)
-  std::vector<GPSDATA> gps_data_;
+  std::vector<GPS_DATA> gps_data_;
   // Our history of GT messages (time, pose)
-  std::vector<GPSDATA> gt_data_;
+  std::vector<GPS_DATA> gt_data_;
+  // Our history of RADAR messages
+  std::vector<RADAR_DATA> radar_data_;
 
+  double curr_time_;
   bool is_initialized_ = false;
+  int count_poses_ = 0;
 
-  int poses_count_ = 0;
   ros::Publisher pub_estimation_, pub_estimation_path_, pub_gt_pose_,
       pub_gt_path;
   std::vector<geometry_msgs::PoseStamped> poses_;

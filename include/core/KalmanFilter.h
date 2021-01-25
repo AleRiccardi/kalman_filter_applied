@@ -28,7 +28,7 @@ class KalmanFilter {
   /**
    * @brief Initialize the state and timestamp.
    */
-  void initialize(const GPSDATA& gps1, const GPSDATA& gps2);
+  void initialize(const GPS_DATA& gps1, const GPS_DATA& gps2);
 
   /**
    * @brief Propagation step.
@@ -37,17 +37,25 @@ class KalmanFilter {
   void propagation(double timestamp);
 
   /**
-   * @brief Correction step.
+   * @brief GPS correction step.
    *
    */
-  void correction(Eigen::Matrix<double, 3, 1> gps_pose);
+  void correction_gps(GPS_DATA& gps_m);
 
-  Eigen::Matrix<double, 3, 1> GetState();
+  /**
+   * @brief RADAR correction step.
+   *
+   */
+  void correction_radar(RADAR_DATA& radar_m);
+
+  Eigen::Vector3d GetState();
 
  private:
   void update_F(double timestamp);
 
-  void update_H();
+  void update_H_gps();
+  void update_H_radar();
+  Eigen::Vector3d h_radar();
 
   // Parameters system manager
   ParamsManager* params_;

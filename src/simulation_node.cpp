@@ -18,7 +18,7 @@ int main(int argc, char** argv) {
   while (ros::ok()) {
     sim->user_control();
     sim->propagate();
-    sim->pub_state();
+    sim->publisher();
 
     ros::spinOnce();
     dur.sleep();

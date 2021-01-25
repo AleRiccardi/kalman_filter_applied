@@ -7,12 +7,20 @@
  * @brief GPS data struct.
  *
  */
-struct GPSDATA {
+struct GPS_DATA {
   /// Timestamp of the reading
   double timestamp;
 
   /// 3D Pose
-  Eigen::Matrix<double, 3, 1> pose;
+  Eigen::Vector3d pose;
+};
+
+struct RADAR_DATA {
+  /// Timestamp of the reading
+  double timestamp;
+
+  /// Beam coordinates
+  Eigen::Vector3d beam;
 };
 
 #endif  // KF_APPLIED_TYPES_H

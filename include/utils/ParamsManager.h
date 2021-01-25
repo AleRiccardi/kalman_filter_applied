@@ -14,9 +14,9 @@ class ParamsManager {
   ParamsManager(ros::NodeHandle& nh);
   ~ParamsManager() = default;
 
-  double rate_gt;
-  double rate_gps;
-  double rate_radar;
+  double frequency_gt;
+  double frequency_gps;
+  double frequency_radar;
 
   std::string frame_id;
   std::string topic_gt;
@@ -31,8 +31,8 @@ class ParamsManager {
   Eigen::Vector3d noise_gps = {0, 0, 0};
   Eigen::Vector3d noise_radar = {0, 0, 0};
 
-  Eigen::Matrix<double, 3, 1> init_pose;
-  Eigen::Matrix<double, 3, 1> init_pose_radar;
+  Eigen::Vector3d init_pose;
+  Eigen::Vector3d init_pose_radar;
 
   /**
    * @brief This function will print out all noise parameters loaded.

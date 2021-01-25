@@ -2,6 +2,7 @@
 #define KF_APPLIED_SIM_MANAGER_H
 
 #include <geometry_msgs/PoseStamped.h>
+#include <geometry_msgs/Vector3Stamped.h>
 #include <nav_msgs/Odometry.h>
 #include <nav_msgs/Path.h>
 #include <ros/ros.h>
@@ -40,7 +41,12 @@ class SimManager {
   ~SimManager() = default;
 
   bool user_control();
-  void pub_state();
+  void publisher();
+  void pub_pose_stamped(Eigen::Vector3d state, ros::Time time, int seq,
+                        std::vector<geometry_msgs::PoseStamped>& poses,
+                        ros::Publisher& pub_pose, ros::Publisher& pub_path);
+  void pub_radar_scan(Eigen::Vector3d state, ros::Time time, int seq,
+                      ros::Publisher& pub_radar);
   void propagate();
   void start_record();
   void stop_record();
@@ -49,25 +55,34 @@ class SimManager {
   double dt = 0.2;
 
  private:
+  ParamsManager* params_;
   StateManager* state_m_;
 
   rosbag::Bag bag_;
-  ParamsManager* params_;
 
-  ros::Publisher pub_gt_pose_;
-  ros::Publisher pub_gt_path_;
-  ros::Publisher pub_gps_pose_;
-  ros::Publisher pub_gps_path_;
-  ros::Publisher pub_radar_pose_;
+  ros::Publisher pub_pose_gt_;
+  ros::Publisher pub_path_gt_;
+  ros::Publisher pub_pose_gps_;
+  ros::Publisher pub_path_gps_;
+  ros::Publisher pub_radar_;
 
   std::vector<geometry_msgs::PoseStamped> poses_gt_;
   std::vector<geometry_msgs::PoseStamped> poses_gps_;
 
   const double ACC = 0.05;
-  Eigen::Matrix<double, 3, 1> acceleration_;
+  Eigen::Vector3d acceleration_;
 
-  int gt_count_ = 0;
-  int gps_count_ = 0;
+  int count_gt_ = 0;
+  int count_gps_ = 0;
+  int count_radar_ = 0;
+
+  ros::Duration period_gt_;
+  ros::Duration period_gps_;
+  ros::Duration period_radar_;
+
+  ros::Time time_gt_;
+  ros::Time time_gps_;
+  ros::Time time_radar_;
 
   bool recording_;
 };

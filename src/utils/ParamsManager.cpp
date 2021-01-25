@@ -6,9 +6,9 @@ ParamsManager::ParamsManager(ros::NodeHandle& nh) {
   // ---------------------------------------------------------------------------
   // General params
 
-  nh.param<double>("rate_gt", rate_gt, 5);
-  nh.param<double>("rate_gps", rate_gps, 5);
-  nh.param<double>("rate_radar", rate_radar, 5);
+  nh.param<double>("frequency_gt", frequency_gt, 5);
+  nh.param<double>("frequency_gps", frequency_gps, 5);
+  nh.param<double>("frequency_radar", frequency_radar, 5);
 
   // ---------------------------------------------------------------------------
   // GPS noise vector
