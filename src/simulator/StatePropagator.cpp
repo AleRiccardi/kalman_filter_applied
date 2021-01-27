@@ -1,6 +1,6 @@
 #include "simulator/StatePropagator.h"
 
-StatePropagator::StatePropagator(ros::NodeHandle nh, ParamsManager* params) {
+StatePropagator::StatePropagator(ParamsManager* params) {
   params_ = params;
 
   // Init random seed
@@ -32,7 +32,7 @@ StatePropagator::StatePropagator(ros::NodeHandle nh, ParamsManager* params) {
   F_.block<1, 9>(8, 0) << 0, 0, 0, 0, 0, 0, 0, 0, 1;
 }
 
-void StatePropagator::propagate(Eigen::Vector3d acceleration) {
+void StatePropagator::propagate(const Eigen::Vector3d& acceleration) {
   // Set state acceleration
   state_.tail(3) = acceleration;
 
@@ -50,11 +50,8 @@ void StatePropagator::generate_gps() {
   rands(1, 0) = static_cast<double>((std::rand() % 200) - 100) / 100;
   rands(2, 0) = static_cast<double>((std::rand() % 200) - 100) / 100;
 
-  // TODO: inline multiplication (if possible)
-  Eigen::Vector3d noise;
-  noise(0) = noise_gps_(0) * rands(0);
-  noise(1) = noise_gps_(1) * rands(1);
-  noise(2) = noise_gps_(2) * rands(2);
+  // Compute sensor noise
+  Eigen::Vector3d noise = noise_gps_.cwiseProduct(rands);
 
   state_gps_ = state_.head(3) + noise;
 }
@@ -67,11 +64,7 @@ void StatePropagator::generate_radar() {
   rands(2, 0) = static_cast<double>((std::rand() % 200) - 100) / 100;
 
   // Compute sensor noise
-  // TODO: inline multiplication (if possible)
-  Eigen::Vector3d noise;
-  noise(0) = noise_radar_(0) * rands(0);
-  noise(1) = noise_radar_(1) * rands(1);
-  noise(2) = noise_radar_(2) * rands(2);
+  Eigen::Vector3d noise = noise_radar_.cwiseProduct(rands);
 
   // From global to local coordinates
   double x = state_(0, 0) - location_radar_(0, 0);

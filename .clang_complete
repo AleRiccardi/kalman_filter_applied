@@ -1,5 +1,0 @@
--DDEBUG
--include ../**.h
--I../common
--I/usr/include/c++/4.8/
--I/usr/include/c++/4.8/x86_64-slackware-linux/

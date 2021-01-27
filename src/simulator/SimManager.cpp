@@ -29,7 +29,7 @@ void Command::print_cmd() {
 
 SimManager::SimManager(ros::NodeHandle nh, ParamsManager *params) {
   params_ = params;
-  state_m_ = new StatePropagator(nh, params);
+  state_m_ = new StatePropagator(params);
 
   // Get sensors frequency
   period_gt_ = ros::Duration(1 / params_->frequency_gt);
@@ -67,8 +67,7 @@ bool SimManager::user_control() {
   if (kbhit()) {
     bool known_cmd = true;
     // Stores the pressed key in ch
-    // TODO: check conversion
-    char u_input = int(getch());
+    char u_input = getch();
 
     if (u_input == Command::forward_.value) {
       acceleration_(0, 0) = ACC;
@@ -172,8 +171,7 @@ void SimManager::pub_radar_scan(Eigen::Vector3d state, ros::Time time, int seq,
   radar.vector.y = state(1, 0);
   radar.vector.z = state(2, 0);
 
-  // TODO: publish lines showing radar scans
-
+  // TODO(alericcardi): publish lines showing radar scans
   pub_radar.publish(radar);
 
   if (recording_) {

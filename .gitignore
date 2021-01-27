@@ -1,6 +1,6 @@
-*.idea/ 
-*.vscode/
-data/
+
+data/**
+!data/1611768525.bag
 
 # Prerequisites
 *.d

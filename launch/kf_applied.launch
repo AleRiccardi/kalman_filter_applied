@@ -27,7 +27,7 @@
     <param name="topic_estimation" type="string" value="/kf_applied/estimation"/>
 
     <!-- bag parameters -->
-    <param name="path_bag" type="string" value="/home/alericcardi/Workspaces/ws_kf/src/kalman_filter_applied/data/1611747417.bag"/>
+    <param name="path_bag" type="string" value="/home/alericcardi/Workspaces/ws_kf/src/kalman_filter_applied/data/1611768525.bag"/>
 
   </node>
 

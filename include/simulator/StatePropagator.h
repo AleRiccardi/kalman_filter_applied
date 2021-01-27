@@ -14,10 +14,10 @@
 
 class StatePropagator {
  public:
-  StatePropagator(ros::NodeHandle nh, ParamsManager* params);
+  StatePropagator(ParamsManager* params);
   ~StatePropagator() = default;
 
-  void propagate(Eigen::Vector3d acceleration);
+  void propagate(const Eigen::Vector3d& acceleration);
   void generate_gps();
   void generate_radar();
 

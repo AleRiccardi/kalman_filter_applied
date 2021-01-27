@@ -60,17 +60,17 @@ void FilterManager::state_estimation() {
   std::vector<GPS_DATA> gps_v;
   pop_gps(gps_v);
   if (!gps_v.empty()) {
-    for (uint i = 0; i < gps_v.size(); i++) {
-      kf_->propagation(gps_v.at(i).timestamp);
-      kf_->correction_gps(gps_v.at(i));
+    for (auto& gps_m : gps_v) {
+      kf_->propagation(gps_m.timestamp);
+      kf_->correction_gps(gps_m);
     }
   }
 
   std::vector<RADAR_DATA> radar_v;
   pop_radar(radar_v);
   if (!radar_v.empty()) {
-    for (uint i = 0; i < radar_v.size(); i++) {
-      kf_->correction_radar(radar_v.at(i));
+    for (auto& radar_m : radar_v) {
+      kf_->correction_radar(radar_m);
     }
   }
 }
@@ -96,8 +96,10 @@ bool FilterManager::pop_gps(std::vector<GPS_DATA>& gps_v) {
     return false;
   }
 
-  gps_v.emplace_back(gps_data_[0]);
-  gps_data_.erase(gps_data_.begin());
+  while (!gps_data_.empty()) {
+    gps_v.emplace_back(gps_data_[0]);
+    gps_data_.erase(gps_data_.begin());
+  }
   return true;
 }
 
@@ -114,7 +116,7 @@ bool FilterManager::pop_radar(std::vector<RADAR_DATA>& radar_v) {
 }
 
 void FilterManager::display() {
-  // TODO: publish the correct ground truth pose based on the time
+  // TODO(alericcardi): publish the correct ground truth pose based on the time
   // of the state estimation and not based on the last stored ground truth.
   if (gt_data_.empty()) return;
 

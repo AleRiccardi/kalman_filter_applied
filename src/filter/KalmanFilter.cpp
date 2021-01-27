@@ -40,7 +40,9 @@ void KalmanFilter::propagation(double timestamp) {
 void KalmanFilter::correction_gps(GPS_DATA& gps_m) {
   Eigen::Vector3d gps_p = gps_m.pose;
   Eigen::Matrix<double, 9, 1> residual;
+  // NOLINTNEXTLINE(readability-identifier-naming)
   Eigen::Matrix<double, 9, 9> S;
+  // NOLINTNEXTLINE(readability-identifier-naming)
   Eigen::Matrix<double, 9, 9> K;
 
   update_H_gps();
@@ -49,40 +51,21 @@ void KalmanFilter::correction_gps(GPS_DATA& gps_m) {
   residual.setZero();
   residual.topLeftCorner(3, 1) = gps_p - state_.topLeftCorner(3, 1);
 
-  // ...
   S = H_ * P_ * H_.transpose() + R_;
   K = P_ * H_.transpose() * S.completeOrthogonalDecomposition().pseudoInverse();
 
   state_ = state_ + K * residual;
-  P_ = (Eigen::MatrixXd::Identity(9, 9) * K * H_) * P_;
-
-  // Print the difference between the state and the gps
-  // std::cout << "GPS" << std::endl;
-  // std::cout << gps_p << std::endl;
-  // std::cout <<
-  // "---------------------------------------------------------------"
-  //              "-------------------------------"
-  //           << std::endl;
-  // std::cout << "STATE" << std::endl;
-  // std::cout << state_.topLeftCorner(3, 1) << std::endl;
-  // std::cout <<
-  // "---------------------------------------------------------------"
-  //              "-------------------------------"
-  //           << std::endl;
-  // std::cout << "RESIDUAL " << std::endl;
-  // std::cout << residual << std::endl;
-  // std::cout <<
-  // "==============================================================="
-  //              "==============================="
-  //           << std::endl
-  //           << std::endl;
+  P_ = P_ - K * S * K.transpose();
+  // P_ = (Eigen::MatrixXd::Identity(9, 9) * K * H_) * P_;
 }
 
 void KalmanFilter::correction_radar(RADAR_DATA& radar_m) {
   Eigen::Vector3d radar_b = radar_m.beam;
   Eigen::Vector3d h_x = h_radar();
   Eigen::Matrix<double, 9, 1> residual;
+  // NOLINTNEXTLINE(readability-identifier-naming)
   Eigen::Matrix<double, 9, 9> S;
+  // NOLINTNEXTLINE(readability-identifier-naming)
   Eigen::Matrix<double, 9, 9> K;
 
   update_H_radar();
@@ -97,33 +80,6 @@ void KalmanFilter::correction_radar(RADAR_DATA& radar_m) {
   state_ = state_ + K * residual;
   P_ = P_ - K * S * K.transpose();
   // P_ = (Eigen::MatrixXd::Identity(9, 9) * K * H_) * P_;
-
-  // Print the difference between the state and the gps
-  // std::cout <<
-  // "---------------------------------------------------------------"
-  //           << std::endl;
-  // std::cout << "RADAR " << std::endl;
-  // std::cout << radar_b << std::endl;
-  // std::cout <<
-  // "---------------------------------------------------------------"
-  //           << std::endl;
-  // std::cout << "h-func " << std::endl;
-  // std::cout << h_x << std::endl;
-  // std::cout <<
-  // "---------------------------------------------------------------"
-  //           << std::endl;
-  // std::cout << "RESIDUAL " << std::endl;
-  // std::cout << residual << std::endl;
-  // std::cout <<
-  // "---------------------------------------------------------------"
-  //           << std::endl;
-  // std::cout << "K * residual " << std::endl;
-  // std::cout << K * residual << std::endl;
-  // std::cout <<
-  // "==============================================================="
-  //              "==============================="
-  //           << std::endl
-  //           << std::endl;
 }
 
 Eigen::Vector3d KalmanFilter::GetState() { return state_.topLeftCorner(3, 1); }
