@@ -1,9 +1,9 @@
-#include <core/CoreManager.h>
+#include <filter/FilterManager.h>
 #include <utils/colors.h>
 
 #include <utility>
 
-CoreManager::CoreManager(ros::NodeHandle nh, ParamsManager* params) {
+FilterManager::FilterManager(ros::NodeHandle nh, ParamsManager* params) {
   params_ = params;
   kf_ = new KalmanFilter(params);
 
@@ -22,7 +22,7 @@ CoreManager::CoreManager(ros::NodeHandle nh, ParamsManager* params) {
   ROS_INFO("Publishing: %s", pub_gt_path.getTopic().c_str());
 }
 
-void CoreManager::feed_m_gt(double timestamp, Eigen::Vector3d pose) {
+void FilterManager::feed_m_gt(double timestamp, Eigen::Vector3d pose) {
   GPS_DATA data;
   data.timestamp = timestamp;
   data.pose = std::move(pose);
@@ -31,7 +31,7 @@ void CoreManager::feed_m_gt(double timestamp, Eigen::Vector3d pose) {
   curr_time_ = timestamp;
 }
 
-void CoreManager::feed_m_gps(double timestamp, Eigen::Vector3d pose) {
+void FilterManager::feed_m_gps(double timestamp, Eigen::Vector3d pose) {
   GPS_DATA data;
   data.timestamp = timestamp;
   data.pose = std::move(pose);
@@ -41,7 +41,7 @@ void CoreManager::feed_m_gps(double timestamp, Eigen::Vector3d pose) {
   curr_time_ = timestamp;
 }
 
-void CoreManager::feed_m_radar(double timestamp, Eigen::Vector3d beam) {
+void FilterManager::feed_m_radar(double timestamp, Eigen::Vector3d beam) {
   RADAR_DATA data;
   data.timestamp = timestamp;
   data.beam = std::move(beam);
@@ -51,32 +51,31 @@ void CoreManager::feed_m_radar(double timestamp, Eigen::Vector3d beam) {
   curr_time_ = timestamp;
 }
 
-void CoreManager::state_estimation() {
+void FilterManager::state_estimation() {
   if (!is_initialized_) {
     is_initialized_ = initialize();
     return;
   }
 
-  // std::vector<GPS_DATA> gps_v;
-  // pop_gps(gps_v);
-  // if (!gps_v.empty()) {
-  //   for (uint i = 0; i < gps_v.size(); i++) {
-  //     // kf_->propagation(gps_v.at(i).timestamp);
-  //     kf_->correction_gps(gps_v.at(i));
-  //   }
-  // }
+  std::vector<GPS_DATA> gps_v;
+  pop_gps(gps_v);
+  if (!gps_v.empty()) {
+    for (uint i = 0; i < gps_v.size(); i++) {
+      kf_->propagation(gps_v.at(i).timestamp);
+      kf_->correction_gps(gps_v.at(i));
+    }
+  }
 
   std::vector<RADAR_DATA> radar_v;
   pop_radar(radar_v);
   if (!radar_v.empty()) {
     for (uint i = 0; i < radar_v.size(); i++) {
-      kf_->propagation(radar_v.at(i).timestamp);
       kf_->correction_radar(radar_v.at(i));
     }
   }
 }
 
-bool CoreManager::initialize() {
+bool FilterManager::initialize() {
   // Required 2 GPS measurements for init
   if (gps_data_.size() < 2) {
     return false;
@@ -92,28 +91,29 @@ bool CoreManager::initialize() {
   return true;
 }
 
-bool CoreManager::pop_gps(std::vector<GPS_DATA>& gps_v) {
+bool FilterManager::pop_gps(std::vector<GPS_DATA>& gps_v) {
   if (gps_data_.empty()) {
     return false;
   }
-  std::cout << gps_data_.size() << std::endl;
 
   gps_v.emplace_back(gps_data_[0]);
   gps_data_.erase(gps_data_.begin());
   return true;
 }
 
-bool CoreManager::pop_radar(std::vector<RADAR_DATA>& radar_v) {
+bool FilterManager::pop_radar(std::vector<RADAR_DATA>& radar_v) {
   if (radar_data_.empty()) {
     return false;
   }
 
-  radar_v.emplace_back(radar_data_[0]);
-  radar_data_.erase(radar_data_.begin());
+  while (!radar_data_.empty()) {
+    radar_v.emplace_back(radar_data_[0]);
+    radar_data_.erase(radar_data_.begin());
+  }
   return true;
 }
 
-void CoreManager::display() {
+void FilterManager::display() {
   // TODO: publish the correct ground truth pose based on the time
   // of the state estimation and not based on the last stored ground truth.
   if (gt_data_.empty()) return;

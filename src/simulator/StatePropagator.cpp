@@ -1,6 +1,6 @@
-#include "simulation/StateManager.h"
+#include "simulator/StatePropagator.h"
 
-StateManager::StateManager(ros::NodeHandle nh, ParamsManager* params) {
+StatePropagator::StatePropagator(ros::NodeHandle nh, ParamsManager* params) {
   params_ = params;
 
   // Init random seed
@@ -32,7 +32,7 @@ StateManager::StateManager(ros::NodeHandle nh, ParamsManager* params) {
   F_.block<1, 9>(8, 0) << 0, 0, 0, 0, 0, 0, 0, 0, 1;
 }
 
-void StateManager::propagate(Eigen::Vector3d acceleration) {
+void StatePropagator::propagate(Eigen::Vector3d acceleration) {
   // Set state acceleration
   state_.tail(3) = acceleration;
 
@@ -44,7 +44,7 @@ void StateManager::propagate(Eigen::Vector3d acceleration) {
   generate_radar();
 }
 
-void StateManager::generate_gps() {
+void StatePropagator::generate_gps() {
   Eigen::Vector3d rands;
   rands(0, 0) = static_cast<double>((std::rand() % 200) - 100) / 100;
   rands(1, 0) = static_cast<double>((std::rand() % 200) - 100) / 100;
@@ -59,7 +59,7 @@ void StateManager::generate_gps() {
   state_gps_ = state_.head(3) + noise;
 }
 
-void StateManager::generate_radar() {
+void StatePropagator::generate_radar() {
   // Generate random nums
   Eigen::Vector3d rands;
   rands(0, 0) = static_cast<double>((std::rand() % 200) - 100) / 100;
@@ -74,9 +74,9 @@ void StateManager::generate_radar() {
   noise(2) = noise_radar_(2) * rands(2);
 
   // From global to local coordinates
-  double x = location_radar_(0, 0) - state_(0, 0);
-  double y = location_radar_(1, 0) - state_(1, 0);
-  double z = location_radar_(2, 0) - state_(2, 0);
+  double x = state_(0, 0) - location_radar_(0, 0);
+  double y = state_(1, 0) - location_radar_(1, 0);
+  double z = state_(2, 0) - location_radar_(2, 0);
 
   // From local cartesian coordinates to local polar coordinates
   state_radar_(0, 0) =
@@ -88,6 +88,6 @@ void StateManager::generate_radar() {
   state_radar_ += noise;
 }
 
-Eigen::Vector3d StateManager::get_gt() { return state_.head(3); }
-Eigen::Vector3d StateManager::get_gps() { return state_gps_; }
-Eigen::Vector3d StateManager::get_radar() { return state_radar_; }
+Eigen::Vector3d StatePropagator::get_gt() { return state_.head(3); }
+Eigen::Vector3d StatePropagator::get_gps() { return state_gps_; }
+Eigen::Vector3d StatePropagator::get_radar() { return state_radar_; }

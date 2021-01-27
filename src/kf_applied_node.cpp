@@ -1,4 +1,4 @@
-#include <core/CoreManager.h>
+#include <filter/FilterManager.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <geometry_msgs/Vector3Stamped.h>
 #include <ros/ros.h>
@@ -18,7 +18,7 @@ int main(int argc, char** argv) {
   ros::NodeHandle nh("~");
 
   auto* params = new ParamsManager(nh);
-  auto* core = new CoreManager(nh, params);
+  auto* filter = new FilterManager(nh, params);
 
   // ---------------------------------------------------------------------------
   // WAIT MODE
@@ -112,7 +112,7 @@ int main(int argc, char** argv) {
       pose(1, 0) = (*pose_m).pose.position.y;
       pose(2, 0) = (*pose_m).pose.position.z;
 
-      core->feed_m_gt(timem, pose);
+      filter->feed_m_gt(timem, pose);
     }
 
     // GPS measurement
@@ -125,7 +125,8 @@ int main(int argc, char** argv) {
       pose(1, 0) = (*pose_m).pose.position.y;
       pose(2, 0) = (*pose_m).pose.position.z;
 
-      core->feed_m_gps(timem, pose);
+      filter->state_estimation();
+      filter->feed_m_gps(timem, pose);
     }
 
     // RADAR measurement
@@ -138,11 +139,10 @@ int main(int argc, char** argv) {
       beam(1, 0) = (*vect_m).vector.y;
       beam(2, 0) = (*vect_m).vector.z;
 
-      core->feed_m_radar(timem, beam);
+      filter->feed_m_radar(timem, beam);
     }
 
-    core->state_estimation();
-    core->display();
+    filter->display();
   }
 
   return 0;

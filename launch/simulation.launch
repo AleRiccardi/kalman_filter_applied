@@ -1,5 +1,5 @@
 <launch>
-  <node name="simulation_node" pkg="kf_applied" type="simulation_node" respawn="false" output="screen">
+  <node name="simulator_node" pkg="kf_applied" type="simulator_node" respawn="false" output="screen">
     <!-- launch-prefix="gdb -ex run"> -->
     <!-- general -->
     <param name="wait_mode" type="double" value="1"/>
@@ -29,5 +29,5 @@
 
 
 
-  <node type="rviz" name="rviz" pkg="rviz" args="-d $(find kf_applied)/rviz/simulation.rviz" />
+  <node type="rviz" name="rviz" pkg="rviz" args="-d $(find kf_applied)/rviz/simulator.rviz" />
 </launch>

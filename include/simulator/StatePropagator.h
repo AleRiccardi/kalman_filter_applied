@@ -12,10 +12,10 @@
 #include "utils/ParamsManager.h"
 #include "utils/types.h"
 
-class StateManager {
+class StatePropagator {
  public:
-  StateManager(ros::NodeHandle nh, ParamsManager* params);
-  ~StateManager() = default;
+  StatePropagator(ros::NodeHandle nh, ParamsManager* params);
+  ~StatePropagator() = default;
 
   void propagate(Eigen::Vector3d acceleration);
   void generate_gps();

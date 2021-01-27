@@ -34,7 +34,7 @@ catkin_package(
         ## This is only necessary because Eigen3 sets a non-standard EIGEN3_INCLUDE_DIR variable
         ${EIGEN3_INCLUDE_DIR}
         LIBRARIES
-        ${PROJECT_NAME}_core
+        ${PROJECT_NAME}_filter
         CATKIN_DEPENDS
         roscpp
         sensor_msgs
@@ -66,14 +66,14 @@ include_directories(
 )
 
 
-set(SIM "simulation")
+set(SIM "simulator")
 
 #####################
 ## SIMULATION library
 add_library(${SIM}
         src/${SIM}_node.cpp
-        src/simulation/SimManager.cpp
-        src/simulation/StateManager.cpp
+        src/simulator/SimManager.cpp
+        src/simulator/StatePropagator.cpp
         src/utils/ParamsManager.cpp
         )
 
@@ -93,8 +93,8 @@ target_link_libraries(${SIM}_node
 add_library(${PROJECT_NAME}
         src/${PROJECT_NAME}_node.cpp
         src/utils/ParamsManager.cpp
-        src/core/CoreManager.cpp
-        src/core/KalmanFilter.cpp
+        src/filter/FilterManager.cpp
+        src/filter/KalmanFilter.cpp
         include/utils/colors.h
         include/utils/types.h)
 

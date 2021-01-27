@@ -3,11 +3,11 @@
 #include <cstdio>
 #include <iostream>
 
-#include "simulation/SimManager.h"
+#include "simulator/SimManager.h"
 #include "utils/ParamsManager.h"
 
 int main(int argc, char** argv) {
-  ros::init(argc, argv, "simulation_node");
+  ros::init(argc, argv, "simulator_node");
   ros::NodeHandle nh("~");
   ros::Time::init();
 

@@ -1,4 +1,4 @@
-#include "simulation/SimManager.h"
+#include "simulator/SimManager.h"
 
 #include <conio.h>
 #include <ros/package.h>
@@ -29,7 +29,7 @@ void Command::print_cmd() {
 
 SimManager::SimManager(ros::NodeHandle nh, ParamsManager *params) {
   params_ = params;
-  state_m_ = new StateManager(nh, params);
+  state_m_ = new StatePropagator(nh, params);
 
   // Get sensors frequency
   period_gt_ = ros::Duration(1 / params_->frequency_gt);

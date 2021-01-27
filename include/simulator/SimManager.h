@@ -14,7 +14,7 @@
 #include <string>
 #include <vector>
 
-#include "simulation/StateManager.h"
+#include "simulator/StatePropagator.h"
 #include "utils/ParamsManager.h"
 
 struct Character {
@@ -56,7 +56,7 @@ class SimManager {
 
  private:
   ParamsManager* params_;
-  StateManager* state_m_;
+  StatePropagator* state_m_;
 
   rosbag::Bag bag_;
 

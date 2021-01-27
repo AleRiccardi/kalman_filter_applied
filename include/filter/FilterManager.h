@@ -6,24 +6,24 @@
 
 #include <Eigen/Dense>
 
-#include "core/KalmanFilter.h"
+#include "filter/KalmanFilter.h"
 #include "utils/ParamsManager.h"
 #include "utils/types.h"
 
-class CoreManager {
+class FilterManager {
  public:
   /**
    * @brief Construct a new Core Manager object
    *
    * @param params of the system stored in the launch file.
    */
-  CoreManager(ros::NodeHandle nh, ParamsManager* params);
+  FilterManager(ros::NodeHandle nh, ParamsManager* params);
 
   /**
    * @brief Destroy the Core Manager object
    *
    */
-  ~CoreManager() = default;
+  ~FilterManager() = default;
 
   /**
    * @brief Store Ground Truth measurement.
