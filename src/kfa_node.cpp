@@ -16,7 +16,7 @@
 int main(int argc, char** argv) {
   try {
     // Launch our ros node
-    ros::init(argc, argv, "kf_applied_node");
+    ros::init(argc, argv, "kfa_node");
     ros::NodeHandle nh("~");
 
     auto* params = new ParamsManager(nh);
@@ -101,7 +101,7 @@ int main(int argc, char** argv) {
       geometry_msgs::PoseStamped::ConstPtr pose_m =
           m.instantiate<geometry_msgs::PoseStamped>();
 
-      // Handle vector RADAR measurement
+      // Handle vector Radar measurement
       geometry_msgs::Vector3Stamped::ConstPtr vect_m =
           m.instantiate<geometry_msgs::Vector3Stamped>();
 
@@ -132,7 +132,7 @@ int main(int argc, char** argv) {
         filter->feed_m_gps(timem, pose);
       }
 
-      // RADAR measurement
+      // Radar measurement
       if (vect_m != nullptr && m.getTopic() == params->topic_radar) {
         // convert into correct format
         // int seq = (*pose_noise).header.seq; // unused

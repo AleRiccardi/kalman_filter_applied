@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-build_path="$1"
+build_path=$(catkin locate -b -e kfa)
 echo "Reading compile_commands.json from $build_path"
 
 echo "Running clang-tidy on all project sources"

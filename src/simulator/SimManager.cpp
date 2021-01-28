@@ -100,8 +100,8 @@ void SimManager::propagate() { state_m_->propagate(acceleration_); }
 void SimManager::publisher() {
   // Get sensor state
   Eigen::Vector3d gt = state_m_->get_gt();
-  Eigen::Vector3d gps = state_m_->get_gps();
-  Eigen::Vector3d radar = state_m_->get_radar();
+  Eigen::Vector3d gps = state_m_->generate_gps();
+  Eigen::Vector3d radar = state_m_->generate_radar();
 
   ros::Time time = ros::Time::now();
 
@@ -182,7 +182,7 @@ void SimManager::pub_radar_scan(Eigen::Vector3d state, ros::Time time, int seq,
 void SimManager::start_record() {
   recording_ = true;
   // TODO(alericcardi): get name from ros
-  std::string path_pkg = ros::package::getPath("kf_applied") + "/data/";
+  std::string path_pkg = ros::package::getPath("kfa") + "/data/datasets";
   std::string file_name =
       std::to_string(static_cast<int>(ros::Time::now().toSec())) + ".bag";
   std::string path_pname = path_pkg + file_name;

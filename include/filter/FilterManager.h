@@ -1,5 +1,5 @@
-#ifndef KF_APPLIED_CORE_MANAGER_H
-#define KF_APPLIED_CORE_MANAGER_H
+#ifndef KFA_FILTER_MANAGER_H
+#define KFA_FILTER_MANAGER_H
 
 #include <geometry_msgs/PoseStamped.h>
 #include <nav_msgs/Path.h>
@@ -56,7 +56,7 @@ class FilterManager {
   void state_estimation();
 
   /**
-   * @brief Display the current state.
+   * @brief Display by publishing the current state.
    *
    */
   void display();
@@ -69,21 +69,23 @@ class FilterManager {
   ParamsManager* params_;
   KalmanFilter* kf_;
 
+  double cur_time_;
+  int count_poses_ = 0;
+  bool is_initialized_ = false;
+
   // Our history of GPS messages (time, pose)
   std::vector<GPS_DATA> gps_data_;
   // Our history of GT messages (time, pose)
   std::vector<GPS_DATA> gt_data_;
-  // Our history of RADAR messages
+  // Our history of Radar messages
   std::vector<RADAR_DATA> radar_data_;
 
-  double curr_time_;
-  bool is_initialized_ = false;
-  int count_poses_ = 0;
-
-  ros::Publisher pub_estimation_, pub_estimation_path_, pub_gt_pose_,
-      pub_gt_path;
+  ros::Publisher pub_estimation_;
+  ros::Publisher pub_estimation_path_;
+  ros::Publisher pub_gt_pose_;
+  ros::Publisher pub_gt_path;
   std::vector<geometry_msgs::PoseStamped> poses_;
   std::vector<geometry_msgs::PoseStamped> poses_gt_;
 };
 
-#endif  // KF_APPLIED_CORE_MANAGER_H
+#endif  // KFA_FILTER_MANAGER_H

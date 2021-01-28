@@ -1,18 +1,26 @@
 <launch>
-  <node name="simulator_node" pkg="kfa" type="simulator_node" respawn="false" output="screen">
+
+  <node name="kfa_node" pkg="kfa" type="kfa_node" respawn="false" output="screen">
     <!-- launch-prefix="gdb -ex run"> -->
+
     <!-- general -->
     <param name="wait_mode" type="double" value="1"/>
 
-    <!-- Objs position -->
+    <!-- Init parameters -->
     <rosparam param="init_pose">[0, 0, 0]</rosparam>
     <rosparam param="init_pose_radar">[10, 0, 0]</rosparam>
+    <rosparam param="init_acceleration">[0.08, 0.08, 0.08]</rosparam>
 
-    <!-- Sensor noise -->
+
+    <!-- Process noise -->
+    <rosparam param="noise_process">[0.3, 0.3, 0.3]</rosparam>
+
+    <!-- Observations noise -->
+    <rosparam param="noise_proces">[0.1, 0.1, 0.1]</rosparam>
     <rosparam param="noise_gps">[0.15, 0.15, 0.05]</rosparam>
     <rosparam param="noise_radar">[0.15, 0.001, 0.001]</rosparam>
 
-    <!-- Sensors frequency (in Hz)-->
+    <!-- Sensors frequency -->
     <param name="frequency_gt" type="double" value="5"/>
     <param name="frequency_gps" type="double" value="1"/>
     <param name="frequency_radar" type="double" value="5"/>
@@ -22,12 +30,14 @@
     <param name="topic_gt" type="string" value="/kfa/gt"/>
     <param name="topic_gps" type="string" value="/kfa/gps"/>
     <param name="topic_radar" type="string" value="/kfa/radar"/>
-
     <param name="topic_estimation" type="string" value="/kfa/estimation"/>
+
+    <!-- bag parameters -->
+    <param name="path_bag" type="string" value="/home/alericcardi/Workspaces/ws_kf/src/kalman_filter_applied/data/datasets/1611836926.bag"/>
 
   </node>
 
+  <node type="rviz" name="rviz" pkg="rviz" args="-d $(find kfa)/rviz/kfa.rviz" />
 
 
-  <node type="rviz" name="rviz" pkg="rviz" args="-d $(find kfa)/rviz/simulator.rviz" />
 </launch>

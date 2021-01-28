@@ -1,5 +1,5 @@
-#ifndef KF_APPLIED_TYPES_H
-#define KF_APPLIED_TYPES_H
+#ifndef KFA_TYPES_H
+#define KFA_TYPES_H
 
 #include <Eigen/Dense>
 
@@ -23,4 +23,4 @@ struct RADAR_DATA {
   Eigen::Vector3d beam;
 };
 
-#endif  // KF_APPLIED_TYPES_H
+#endif  // KFA_TYPES_H

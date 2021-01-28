@@ -1,5 +1,5 @@
-#ifndef KF_APPLIED_SIM_MANAGER_H
-#define KF_APPLIED_SIM_MANAGER_H
+#ifndef KFA_SIM_MANAGER_H
+#define KFA_SIM_MANAGER_H
 
 #include <geometry_msgs/PoseStamped.h>
 #include <geometry_msgs/Vector3Stamped.h>
@@ -52,8 +52,6 @@ class SimManager {
   void stop_record();
   void kill();
 
-  double dt = 0.2;
-
  private:
   ParamsManager* params_;
   StatePropagator* state_m_;
@@ -87,4 +85,4 @@ class SimManager {
   bool recording_;
 };
 
-#endif  // KF_APPLIED_SIM_MANAGER_H
+#endif  // KFA_SIM_MANAGER_H

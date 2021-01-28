@@ -28,7 +28,7 @@ void FilterManager::feed_m_gt(double timestamp, Eigen::Vector3d pose) {
   data.pose = std::move(pose);
   gt_data_.emplace_back(data);
   // Update current time
-  curr_time_ = timestamp;
+  cur_time_ = timestamp;
 }
 
 void FilterManager::feed_m_gps(double timestamp, Eigen::Vector3d pose) {
@@ -38,7 +38,7 @@ void FilterManager::feed_m_gps(double timestamp, Eigen::Vector3d pose) {
   gps_data_.emplace_back(data);
 
   // Update current time
-  curr_time_ = timestamp;
+  cur_time_ = timestamp;
 }
 
 void FilterManager::feed_m_radar(double timestamp, Eigen::Vector3d beam) {
@@ -48,7 +48,7 @@ void FilterManager::feed_m_radar(double timestamp, Eigen::Vector3d beam) {
   radar_data_.emplace_back(data);
 
   // Update current time
-  curr_time_ = timestamp;
+  cur_time_ = timestamp;
 }
 
 void FilterManager::state_estimation() {
@@ -61,7 +61,7 @@ void FilterManager::state_estimation() {
   pop_gps(gps_v);
   if (!gps_v.empty()) {
     for (auto& gps_m : gps_v) {
-      kf_->propagation(gps_m.timestamp);
+      kf_->propagation_step(gps_m.timestamp);
       kf_->correction_gps(gps_m);
     }
   }
@@ -76,17 +76,17 @@ void FilterManager::state_estimation() {
 }
 
 bool FilterManager::initialize() {
-  // Required 2 GPS measurements for init
+  // Required 1 GPS measurements for init
   if (gps_data_.size() < 2) {
     return false;
   }
 
+  // Retrieve and erase the first GPS measurement
   GPS_DATA gps1 = gps_data_[0];
-  GPS_DATA gps2 = gps_data_[1];
-  // Erase the first element
   gps_data_.erase(gps_data_.begin());
 
-  kf_->initialize(gps1, gps2);
+  // Initialize the pose
+  kf_->initialization_step(gps1);
 
   return true;
 }
@@ -120,7 +120,7 @@ void FilterManager::display() {
   // of the state estimation and not based on the last stored ground truth.
   if (gt_data_.empty()) return;
 
-  Eigen::MatrixXd state = kf_->GetState();
+  Eigen::MatrixXd state = kf_->get_state();
   Eigen::MatrixXd gt = gt_data_[gt_data_.size() - 1].pose;
 
   // Create pose (note we use the bag time)

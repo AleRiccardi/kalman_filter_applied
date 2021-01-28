@@ -14,7 +14,7 @@ int main(int argc, char** argv) {
 
     auto* params = new ParamsManager(nh);
     auto* sim = new SimManager(nh, params);
-    ros::Duration dur(0.1);  // faster than the measurements
+    ros::Duration dur(0.1);  // must be faster than any sensors
 
     while (ros::ok()) {
       sim->user_control();

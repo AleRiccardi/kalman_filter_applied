@@ -1,5 +1,5 @@
-#ifndef KF_APPLIED_PARAMSMANAGER_H
-#define KF_APPLIED_PARAMSMANAGER_H
+#ifndef KFA_PARAMS_MANAGER_H
+#define KFA_PARAMS_MANAGER_H
 
 #include <ros/ros.h>
 #include <utils/colors.h>
@@ -27,7 +27,10 @@ class ParamsManager {
   std::string topic_gps_path;
   std::string topic_radar;
 
+  Eigen::Vector3d init_acceleration = {0, 0, 0};
+
   // Noise vector
+  Eigen::Vector3d noise_process = {0, 0, 0};
   Eigen::Vector3d noise_gps = {0, 0, 0};
   Eigen::Vector3d noise_radar = {0, 0, 0};
 
@@ -48,4 +51,4 @@ class ParamsManager {
   // abc
 };
 
-#endif  // KF_APPLIED_MANAGEROPTIONS_H
+#endif  // KFA_PARAMS_MANAGER_H

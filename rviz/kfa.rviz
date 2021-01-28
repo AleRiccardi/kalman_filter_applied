@@ -74,7 +74,7 @@ Visualization Manager:
       Radius: 0.029999999329447746
       Shaft Diameter: 0.10000000149011612
       Shaft Length: 0.10000000149011612
-      Topic: /kf_applied/gt_path
+      Topic: /kfa/gt_path
       Unreliable: false
       Value: true
     - Alpha: 1
@@ -97,7 +97,7 @@ Visualization Manager:
       Radius: 0.029999999329447746
       Shaft Diameter: 0.10000000149011612
       Shaft Length: 0.10000000149011612
-      Topic: /kf_applied/estimation_path
+      Topic: /kfa/estimation_path
       Unreliable: false
       Value: true
   Enabled: true

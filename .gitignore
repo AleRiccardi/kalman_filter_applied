@@ -1,6 +1,6 @@
 
-data/**
-!data/1611768525.bag
+data/datasets/**
+!data/datasets/1611836926.bag
 
 # Prerequisites
 *.d

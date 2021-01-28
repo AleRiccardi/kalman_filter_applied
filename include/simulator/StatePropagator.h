@@ -1,5 +1,5 @@
-#ifndef KF_APPLIED_STATE_MANAGER_H
-#define KF_APPLIED_STATE_MANAGER_H
+#ifndef KFA_STATE_PROPAGATOR_H
+#define KFA_STATE_PROPAGATOR_H
 
 #include <math.h>
 #include <ros/ros.h>
@@ -18,28 +18,25 @@ class StatePropagator {
   ~StatePropagator() = default;
 
   void propagate(const Eigen::Vector3d& acceleration);
-  void generate_gps();
-  void generate_radar();
-
   Eigen::Vector3d get_gt();
-  Eigen::Vector3d get_gps();
-  Eigen::Vector3d get_radar();
-
-  double dt = 0.2;
+  Eigen::Vector3d generate_gps();
+  Eigen::Vector3d generate_radar();
 
  private:
+  Eigen::Vector3d random_probs();
+
   ParamsManager* params_;
 
-  Eigen::Matrix<double, 9, 9> F_;
-  Eigen::Vector3d noise_gps_;
-  Eigen::Vector3d noise_radar_;
-
+  double dt_;
   int poses_count_ = 0;
-  Eigen::Matrix<double, 9, 1> state_;
-  Eigen::Vector3d state_gps_;
-  Eigen::Vector3d state_radar_;
 
-  Eigen::Vector3d location_radar_;
+  // State vector
+  Eigen::Matrix<double, 6, 1> state_;
+
+  // State-transistion matrix
+  Eigen::Matrix<double, 6, 6> F_;
+  // Control-input matrix
+  Eigen::Matrix<double, 6, 3> B_;
 };
 
-#endif  // KF_APPLIED_STATE_MANAGER_H
+#endif  // KFA_STATE_PROPAGATOR_H

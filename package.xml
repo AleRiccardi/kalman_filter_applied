@@ -1,16 +1,12 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>kf_applied</name>
-  <version>0.0.0</version>
+  <name>kfa</name>
+  <version>0.0.1</version>
+  <license>MIT</license>
   <description>The Kalman Filter applied to symulated enviornments.</description>
 
-  <!-- One maintainer tag required, multiple allowed, one person per tag -->
-  <!-- Example:  -->
-  <!-- <maintainer email="jane.doe@example.com">Jane Doe</maintainer> -->
-  <maintainer email="alericcardi1996@gmail.com">Alessandro Riccardi</maintainer>
-  <license>BSD</license>
   <author email="alericcardi1996@gmail.com">Alessandro Riccardi</author>
- 
+  <maintainer email="alericcardi1996@gmail.com">Alessandro Riccardi</maintainer>
 
   <!-- buildtool_depend: dependencies of the build process -->
   <buildtool_depend>catkin</buildtool_depend>
