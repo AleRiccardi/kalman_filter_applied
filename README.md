@@ -39,12 +39,13 @@ roslaunch kfa kfa.launch
 
 Kalman filtering is an algorithm that provides estimates of some unknown variables given the measurements observed over time. The unknown variables, in our case, are the 3D coordinates of our object in the simulated environment.
 
-The algorithm works in a two-step process: **propagation** and **correction**. In the propagation step, the current state $\mathbf{x}$ is propagated along with their uncertainties. Once the outcome of the next measurement (necessarily corrupted with some amount of error, including random noise) is observed, the estimated state is then corrected.
+The algorithm works in a two-step process: **propagation** and **correction**. In the propagation step, the current state is propagated along with their uncertainties. Once the outcome of the next measurement (necessarily corrupted with some amount of error, including random noise) is observed, the estimated state is then corrected.
 
 ### **State vector**
 
-The state vector at time $t$ is defined as:
+The state vector at time t is defined as:
 
+<!-- 
 $$
 \begin{aligned}
 \mathbf{x}_t &= 
@@ -53,40 +54,52 @@ x \\ y \\ z \\ \dot{x} \\ \dot{y} \\ \dot{z}
 \end{bmatrix}
 \end{aligned}
 $$
+ -->
 
-where $x$, $y$, $z$ are the 3D coordinates and $\dot{x}$, $\dot{y}$, $\dot{z}$ the velocity.
+<img src="https://latex.codecogs.com/gif.latex?\begin{aligned}&space;\mathbf{x}_t&space;&=&space;\begin{bmatrix}&space;x&space;\\&space;y&space;\\&space;z&space;\\&space;\dot{x}&space;\\&space;\dot{y}&space;\\&space;\dot{z}&space;\end{bmatrix}&space;\end{aligned}" title="\begin{aligned} \mathbf{x}_t &= \begin{bmatrix} x \\ y \\ z \\ \dot{x} \\ \dot{y} \\ \dot{z} \end{bmatrix} \end{aligned}" />
+
+where x, y, z are the 3D coordinates and x, y, z (dot) are the velocities.
 
 ### **Propagation step**
 
 The most common dynamic model is a constant velocity (CV) model, which assumes that the velocity is constant during a sampling interval. The linear propagation equation are defined as:
 
+<!-- 
 $$
 \begin{aligned}
 \hat{\mathbf{x}}_{t} &={\mathbf{F}\mathbf{x}_{t-1} + \mathbf{B}\mathbf{u}_{t-1}} \\
  \hat{\mathbf{P}}_{t} &= {{\mathbf{F}}_{t}}{\mathbf{P}}_{t-1}{{\mathbf{F}}_{t}^{\top }}+{\mathbf{Q}}_{t}
 \end{aligned}
 $$
+ -->
 
-The State-transition matrix $\mathbf{F}$ is defined as:
+<img src="https://latex.codecogs.com/gif.latex?\begin{aligned}&space;\hat{\mathbf{x}}_{t}&space;&={\mathbf{F}\mathbf{x}_{t-1}&space;&plus;&space;\mathbf{B}\mathbf{u}_{t-1}}&space;\\&space;\hat{\mathbf{P}}_{t}&space;&=&space;{{\mathbf{F}}_{t}}{\mathbf{P}}_{t-1}{{\mathbf{F}}_{t}^{\top&space;}}&plus;{\mathbf{Q}}_{t}&space;\end{aligned}" title="\begin{aligned} \hat{\mathbf{x}}_{t} &={\mathbf{F}\mathbf{x}_{t-1} + \mathbf{B}\mathbf{u}_{t-1}} \\ \hat{\mathbf{P}}_{t} &= {{\mathbf{F}}_{t}}{\mathbf{P}}_{t-1}{{\mathbf{F}}_{t}^{\top }}+{\mathbf{Q}}_{t} \end{aligned}" />
 
+The State-transition matrix is defined as:
+
+<!-- 
 $$
 \begin{aligned}
 \mathbf{F} &= 
 \begin{bmatrix}
-1 & 0 & 0 & \mathrm{dt} & 0  & 0  \\
-0 & 1 & 0 & 0  & \mathrm{dt} & 0  \\
-0 & 0 & 1 & 0  & 0  & \mathrm{dt} \\
-0 & 0 & 0 & 1  & 0  & 0  \\
-0 & 0 & 0 & 0  & 1  & 0  \\
-0 & 0 & 0 & 0  & 0  & 1  \\
+1 & 0 & 0 & \mathrm{dt} & 0 & 0 \\
+0 & 1 & 0 & 0 & \mathrm{dt} & 0 \\
+0 & 0 & 1 & 0 & 0 & \mathrm{dt} \\
+0 & 0 & 0 & 1 & 0 & 0 \\
+0 & 0 & 0 & 0 & 1 & 0 \\
+0 & 0 & 0 & 0 & 0 & 1 \\
 \end{bmatrix}
 \end{aligned}
 $$
+-->
 
-where $\mathrm{dt}$ is the time interval between two propagation steps.
 
-The Control-input matrix $\mathbf{B}$ is defined as:
+<img src="https://latex.codecogs.com/gif.latex?\begin{aligned}&space;\mathbf{F}&space;&=&space;\begin{bmatrix}&space;1&space;&&space;0&space;&&space;0&space;&&space;\mathrm{dt}&space;&&space;0&space;&&space;0&space;\\&space;0&space;&&space;1&space;&&space;0&space;&&space;0&space;&&space;\mathrm{dt}&space;&&space;0&space;\\&space;0&space;&&space;0&space;&&space;1&space;&&space;0&space;&&space;0&space;&&space;\mathrm{dt}&space;\\&space;0&space;&&space;0&space;&&space;0&space;&&space;1&space;&&space;0&space;&&space;0&space;\\&space;0&space;&&space;0&space;&&space;0&space;&&space;0&space;&&space;1&space;&&space;0&space;\\&space;0&space;&&space;0&space;&&space;0&space;&&space;0&space;&&space;0&space;&&space;1&space;\\&space;\end{bmatrix}&space;\end{aligned}" title="\begin{aligned} \mathbf{F} &= \begin{bmatrix} 1 & 0 & 0 & \mathrm{dt} & 0 & 0 \\ 0 & 1 & 0 & 0 & \mathrm{dt} & 0 \\ 0 & 0 & 1 & 0 & 0 & \mathrm{dt} \\ 0 & 0 & 0 & 1 & 0 & 0 \\ 0 & 0 & 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & 0 & 0 & 1 \\ \end{bmatrix} \end{aligned}" />
 
+where is the time interval between two propagation steps.
+
+The Control-input matrix is defined as:
+<!-- 
 $$
 \begin{aligned}
 \mathbf{B} &= 
@@ -99,12 +112,15 @@ $$
 0 & 0 & \mathrm{dt} \\
 \end{bmatrix}
 \end{aligned}
-$$
+$$ 
+-->
+
+<img src="https://latex.codecogs.com/gif.latex?\begin{aligned}&space;\mathbf{B}&space;&=&space;\begin{bmatrix}&space;\frac{1}{2}\mathrm{dt}^2&space;&&space;0&space;&&space;0&space;\\&space;0&space;&&space;\frac{1}{2}\mathrm{dt}^2&space;&&space;0&space;\\&space;0&space;&&space;0&space;&&space;\frac{1}{2}\mathrm{dt}^2&space;\\&space;\mathrm{dt}&space;&&space;0&space;&&space;0&space;\\&space;0&space;&&space;\mathrm{dt}&space;&&space;0&space;\\&space;0&space;&&space;0&space;&&space;\mathrm{dt}&space;\\&space;\end{bmatrix}&space;\end{aligned}" title="\begin{aligned} \mathbf{B} &= \begin{bmatrix} \frac{1}{2}\mathrm{dt}^2 & 0 & 0 \\ 0 & \frac{1}{2}\mathrm{dt}^2 & 0 \\ 0 & 0 & \frac{1}{2}\mathrm{dt}^2 \\ \mathrm{dt} & 0 & 0 \\ 0 & \mathrm{dt} & 0 \\ 0 & 0 & \mathrm{dt} \\ \end{bmatrix} \end{aligned}" />
 
 ### **Correction step**
 
 In the Correction step, the current prediction is combined with current observation information to refine the state estimate. The non-linear correction equation are defined as:
-
+<!-- 
 $$
 \begin{aligned}
 \tilde{\mathbf{y}}_k &=\mathbf{z}_k - h(\hat{\mathbf{x}}_{t})
@@ -117,12 +133,15 @@ $$
 \\
 {\mathbf{P}}_{{t}} &=({\mathbf{I}}-{\mathbf{K}}_{{t}}{{{\mathbf{H}}_{{t}}}})\hat{\mathbf{P}}_{{t}}
 \end{aligned}
-$$
+$$ 
+-->
+
+<img src="https://latex.codecogs.com/gif.latex?\begin{aligned}&space;\tilde{\mathbf{y}}_k&space;&=\mathbf{z}_k&space;-&space;h(\hat{\mathbf{x}}_{t})&space;\\&space;{\mathbf{S}}_{{t}}&space;&={{{\mathbf{H}}_{{t}}}}{\hat{\mathbf{P}}}_{{t}}{{{\mathbf{H}}_{{t}}^{\top&space;}}}&plus;{\mathbf{R}}_{{t}}&space;\\&space;{\mathbf{K}}_{{t}}&space;&={\hat{\mathbf{P}}}_{{t}}{{{\mathbf{H}}_{{t}}^{\top&space;}}}{\mathbf{S}}_{{t}}^{{-1}}&space;\\\\&space;{\hat&space;{{\mathbf{x}}}}_{{t}}&space;&={\hat&space;{{\mathbf{x}}}}_{{t}}&plus;{\mathbf{K}}_{{t}}{\tilde&space;{{\mathbf{y}}}}_{{t}}&space;\\&space;{\mathbf{P}}_{{t}}&space;&=({\mathbf{I}}-{\mathbf{K}}_{{t}}{{{\mathbf{H}}_{{t}}}})\hat{\mathbf{P}}_{{t}}&space;\end{aligned}" title="\begin{aligned} \tilde{\mathbf{y}}_k &=\mathbf{z}_k - h(\hat{\mathbf{x}}_{t}) \\ {\mathbf{S}}_{{t}} &={{{\mathbf{H}}_{{t}}}}{\hat{\mathbf{P}}}_{{t}}{{{\mathbf{H}}_{{t}}^{\top }}}+{\mathbf{R}}_{{t}} \\ {\mathbf{K}}_{{t}} &={\hat{\mathbf{P}}}_{{t}}{{{\mathbf{H}}_{{t}}^{\top }}}{\mathbf{S}}_{{t}}^{{-1}} \\\\ {\hat {{\mathbf{x}}}}_{{t}} &={\hat {{\mathbf{x}}}}_{{t}}+{\mathbf{K}}_{{t}}{\tilde {{\mathbf{y}}}}_{{t}} \\ {\mathbf{P}}_{{t}} &=({\mathbf{I}}-{\mathbf{K}}_{{t}}{{{\mathbf{H}}_{{t}}}})\hat{\mathbf{P}}_{{t}} \end{aligned}" />
 
 ### GPS measurement
 
 The GPS provides measurements of the position of the object in 3D coordinates:
-
+<!-- 
 $$
 {\begin{aligned}
 h(\hat{\mathbf{x}}_t) &=
@@ -130,10 +149,14 @@ h(\hat{\mathbf{x}}_t) &=
 x \\ y \\ z
 \end{bmatrix}
 \end{aligned}}
-$$
+$$ 
+-->
 
-The observation Jacobian matrix $\mathbf{H}$ is the identity matrix:
+<img src="https://latex.codecogs.com/gif.latex?{\begin{aligned}&space;h(\hat{\mathbf{x}}_t)&space;&=&space;\begin{bmatrix}&space;x&space;\\&space;y&space;\\&space;z&space;\end{bmatrix}&space;\end{aligned}}" title="{\begin{aligned} h(\hat{\mathbf{x}}_t) &= \begin{bmatrix} x \\ y \\ z \end{bmatrix} \end{aligned}}" />
 
+The observation Jacobian matrix H is the identity matrix:
+
+<!-- 
 $$
 \begin{aligned}
 \mathbf{H}_t&=
@@ -145,12 +168,17 @@ $$
 
 \end{bmatrix}}
 \end{aligned}
-$$
+$$ 
+-->
+
+<img src="https://latex.codecogs.com/gif.latex?\begin{aligned}&space;\mathbf{H}_t&=&space;{\frac&space;{\partial&space;h(\hat{\mathbf{x}}_t)}{\partial&space;\left(x,y,z\right)}}&=&space;{\begin{bmatrix}&space;1&space;&&space;0&space;&&space;0&space;\\&space;0&space;&&space;1&space;&&space;0&space;\\&space;0&space;&&space;0&space;&&space;1&space;\\&space;\end{bmatrix}}&space;\end{aligned}" title="\begin{aligned} \mathbf{H}_t&= {\frac {\partial h(\hat{\mathbf{x}}_t)}{\partial \left(x,y,z\right)}}&= {\begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & 1 \\ \end{bmatrix}} \end{aligned}" />
 
 ### Radar measurement
 
 The Radar provides measurements of the object in spherical coordinate system:
 
+
+<!-- 
 $$
 {\begin{aligned}
 h(\hat{\mathbf{x}}_t) &=
@@ -164,21 +192,28 @@ h(\hat{\mathbf{x}}_t) &=
 \arctan \left({\frac {y}{x}}\right)
 \end{bmatrix}
 \end{aligned}}
-$$
+$$ -->
 
-The observation Jacobian matrix $\mathbf{H}$ is defined as:
+<img src="https://latex.codecogs.com/gif.latex?{\begin{aligned}&space;h(\hat{\mathbf{x}}_t)&space;&=&space;\begin{bmatrix}&space;\rho\\&space;\theta\\&space;\varphi&space;\end{bmatrix}&space;&=&space;\begin{bmatrix}&space;{\sqrt&space;{x^{2}&plus;y^{2}&plus;z^{2}}}\\&space;\arccos&space;\left({\frac&space;{z}{\sqrt&space;{x^{2}&plus;y^{2}&plus;z^{2}}}}\right)\\&space;\arctan&space;\left({\frac&space;{y}{x}}\right)&space;\end{bmatrix}&space;\end{aligned}}" title="{\begin{aligned} h(\hat{\mathbf{x}}_t) &= \begin{bmatrix} \rho\\ \theta\\ \varphi \end{bmatrix} &= \begin{bmatrix} {\sqrt {x^{2}+y^{2}+z^{2}}}\\ \arccos \left({\frac {z}{\sqrt {x^{2}+y^{2}+z^{2}}}}\right)\\ \arctan \left({\frac {y}{x}}\right) \end{bmatrix} \end{aligned}}">
 
+The observation Jacobian matrix H is defined as:
+
+<!-- 
 $$
 \begin{aligned}
 \mathbf{H}_t&=
 {\frac {\partial h(\hat{\mathbf{x}}_t)}{\partial \left(x,y,z\right)}}&=
-{\begin{bmatrix}
+\begin{bmatrix}
 {\frac {x}{\rho }}&{\frac {y}{\rho }}&{\frac {z}{\rho }}\\
 {\frac {xz}{\rho ^{2}{\sqrt {x^{2}+y^{2}}}}}&{\frac {yz}{\rho ^{2}{\sqrt {x^{2}+y^{2}}}}}&-{\frac {\sqrt {x^{2}+y^{2}}}{\rho ^{2}}}\\
 {\frac {-y}{x^{2}+y^{2}}}&{\frac {x}{x^{2}+y^{2}}}&0\\
-\end{bmatrix}}
+\end{bmatrix}
 \end{aligned}
-$$
+$$  
+-->
+
+<img src="https://latex.codecogs.com/gif.latex?\begin{aligned}&space;\mathbf{H}_t&=&space;{\frac&space;{\partial&space;h(\hat{\mathbf{x}}_t)}{\partial&space;\left(x,y,z\right)}}&=&space;\begin{bmatrix}&space;{\frac&space;{x}{\rho&space;}}&{\frac&space;{y}{\rho&space;}}&{\frac&space;{z}{\rho&space;}}\\&space;{\frac&space;{xz}{\rho&space;^{2}{\sqrt&space;{x^{2}&plus;y^{2}}}}}&{\frac&space;{yz}{\rho&space;^{2}{\sqrt&space;{x^{2}&plus;y^{2}}}}}&-{\frac&space;{\sqrt&space;{x^{2}&plus;y^{2}}}{\rho&space;^{2}}}\\&space;{\frac&space;{-y}{x^{2}&plus;y^{2}}}&{\frac&space;{x}{x^{2}&plus;y^{2}}}&0\\&space;\end{bmatrix}&space;\end{aligned}" title="\begin{aligned} \mathbf{H}_t&= {\frac {\partial h(\hat{\mathbf{x}}_t)}{\partial \left(x,y,z\right)}}&= \begin{bmatrix} {\frac {x}{\rho }}&{\frac {y}{\rho }}&{\frac {z}{\rho }}\\ {\frac {xz}{\rho ^{2}{\sqrt {x^{2}+y^{2}}}}}&{\frac {yz}{\rho ^{2}{\sqrt {x^{2}+y^{2}}}}}&-{\frac {\sqrt {x^{2}+y^{2}}}{\rho ^{2}}}\\ {\frac {-y}{x^{2}+y^{2}}}&{\frac {x}{x^{2}+y^{2}}}&0\\ \end{bmatrix} \end{aligned}" />
+
 
 ## Contributing
 
