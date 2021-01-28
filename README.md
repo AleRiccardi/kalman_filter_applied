@@ -138,7 +138,7 @@ $$
 
 <img src="https://latex.codecogs.com/gif.latex?\begin{aligned}&space;\tilde{\mathbf{y}}_k&space;&=\mathbf{z}_k&space;-&space;h(\hat{\mathbf{x}}_{t})&space;\\&space;{\mathbf{S}}_{{t}}&space;&={{{\mathbf{H}}_{{t}}}}{\hat{\mathbf{P}}}_{{t}}{{{\mathbf{H}}_{{t}}^{\top&space;}}}&plus;{\mathbf{R}}_{{t}}&space;\\&space;{\mathbf{K}}_{{t}}&space;&={\hat{\mathbf{P}}}_{{t}}{{{\mathbf{H}}_{{t}}^{\top&space;}}}{\mathbf{S}}_{{t}}^{{-1}}&space;\\\\&space;{\hat&space;{{\mathbf{x}}}}_{{t}}&space;&={\hat&space;{{\mathbf{x}}}}_{{t}}&plus;{\mathbf{K}}_{{t}}{\tilde&space;{{\mathbf{y}}}}_{{t}}&space;\\&space;{\mathbf{P}}_{{t}}&space;&=({\mathbf{I}}-{\mathbf{K}}_{{t}}{{{\mathbf{H}}_{{t}}}})\hat{\mathbf{P}}_{{t}}&space;\end{aligned}" title="\begin{aligned} \tilde{\mathbf{y}}_k &=\mathbf{z}_k - h(\hat{\mathbf{x}}_{t}) \\ {\mathbf{S}}_{{t}} &={{{\mathbf{H}}_{{t}}}}{\hat{\mathbf{P}}}_{{t}}{{{\mathbf{H}}_{{t}}^{\top }}}+{\mathbf{R}}_{{t}} \\ {\mathbf{K}}_{{t}} &={\hat{\mathbf{P}}}_{{t}}{{{\mathbf{H}}_{{t}}^{\top }}}{\mathbf{S}}_{{t}}^{{-1}} \\\\ {\hat {{\mathbf{x}}}}_{{t}} &={\hat {{\mathbf{x}}}}_{{t}}+{\mathbf{K}}_{{t}}{\tilde {{\mathbf{y}}}}_{{t}} \\ {\mathbf{P}}_{{t}} &=({\mathbf{I}}-{\mathbf{K}}_{{t}}{{{\mathbf{H}}_{{t}}}})\hat{\mathbf{P}}_{{t}} \end{aligned}" />
 
-### GPS measurement
+#### GPS measurement
 
 The GPS provides measurements of the position of the object in 3D coordinates:
 <!-- 
@@ -173,7 +173,7 @@ $$
 
 <img src="https://latex.codecogs.com/gif.latex?\begin{aligned}&space;\mathbf{H}_t&=&space;{\frac&space;{\partial&space;h(\hat{\mathbf{x}}_t)}{\partial&space;\left(x,y,z\right)}}&=&space;{\begin{bmatrix}&space;1&space;&&space;0&space;&&space;0&space;\\&space;0&space;&&space;1&space;&&space;0&space;\\&space;0&space;&&space;0&space;&&space;1&space;\\&space;\end{bmatrix}}&space;\end{aligned}" title="\begin{aligned} \mathbf{H}_t&= {\frac {\partial h(\hat{\mathbf{x}}_t)}{\partial \left(x,y,z\right)}}&= {\begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & 1 \\ \end{bmatrix}} \end{aligned}" />
 
-### Radar measurement
+#### Radar measurement
 
 The Radar provides measurements of the object in spherical coordinate system:
 
@@ -213,7 +213,6 @@ $$
 -->
 
 <img src="https://latex.codecogs.com/gif.latex?\begin{aligned}&space;\mathbf{H}_t&=&space;{\frac&space;{\partial&space;h(\hat{\mathbf{x}}_t)}{\partial&space;\left(x,y,z\right)}}&=&space;\begin{bmatrix}&space;{\frac&space;{x}{\rho&space;}}&{\frac&space;{y}{\rho&space;}}&{\frac&space;{z}{\rho&space;}}\\&space;{\frac&space;{xz}{\rho&space;^{2}{\sqrt&space;{x^{2}&plus;y^{2}}}}}&{\frac&space;{yz}{\rho&space;^{2}{\sqrt&space;{x^{2}&plus;y^{2}}}}}&-{\frac&space;{\sqrt&space;{x^{2}&plus;y^{2}}}{\rho&space;^{2}}}\\&space;{\frac&space;{-y}{x^{2}&plus;y^{2}}}&{\frac&space;{x}{x^{2}&plus;y^{2}}}&0\\&space;\end{bmatrix}&space;\end{aligned}" title="\begin{aligned} \mathbf{H}_t&= {\frac {\partial h(\hat{\mathbf{x}}_t)}{\partial \left(x,y,z\right)}}&= \begin{bmatrix} {\frac {x}{\rho }}&{\frac {y}{\rho }}&{\frac {z}{\rho }}\\ {\frac {xz}{\rho ^{2}{\sqrt {x^{2}+y^{2}}}}}&{\frac {yz}{\rho ^{2}{\sqrt {x^{2}+y^{2}}}}}&-{\frac {\sqrt {x^{2}+y^{2}}}{\rho ^{2}}}\\ {\frac {-y}{x^{2}+y^{2}}}&{\frac {x}{x^{2}+y^{2}}}&0\\ \end{bmatrix} \end{aligned}" />
-
 
 ## Contributing
 
