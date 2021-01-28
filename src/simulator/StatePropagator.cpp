@@ -71,7 +71,7 @@ Eigen::Vector3d StatePropagator::generate_radar() {
   double y = state_(1, 0) - params_->init_pose_radar(1, 0);
   double z = state_(2, 0) - params_->init_pose_radar(2, 0);
 
-  // From local cartesian coordinates to local polar coordinates
+  // From local cartesian coordinates to local spherical coordinates
   state_radar(0, 0) =
       std::pow(std::pow(x, 2) + std::pow(y, 2) + std::pow(z, 2), 0.5);
   state_radar(1, 0) = std::acos(z / state_radar(0, 0));

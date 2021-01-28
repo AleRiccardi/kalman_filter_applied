@@ -63,7 +63,7 @@ class KalmanFilter {
    * @brief General correction step.
    *
    * @param Y_t Residual between measurement and observation.
-   * @param H_t Hessian matrix of the observation.
+   * @param H_t Jacobian matrix of the observation.
    * @param R_t Covariance observation matrix.
    */
   void correction_step(Eigen::Matrix<double, 6, 1> Y_t,
@@ -76,16 +76,16 @@ class KalmanFilter {
   void update_F();
 
   /**
-   * @brief Compute the Hessian matrix for a GPS measurement.
+   * @brief Compute the Jacobian matrix for a GPS measurement.
    *
-   * @return Eigen::Matrix<double, 6, 6> The computed GPS Hessian matrix.
+   * @return Eigen::Matrix<double, 6, 6> The computed GPS Jacobian matrix.
    */
   Eigen::Matrix<double, 6, 6> compute_H_gps();
 
   /**
-   * @brief Compute the Hessian matrix for a Radar measurement.
+   * @brief Compute the Jacobian matrix for a Radar measurement.
    *
-   * @return Eigen::Matrix<double, 6, 6> the computed Radar Hessian matrix.
+   * @return Eigen::Matrix<double, 6, 6> the computed Radar Jacobian matrix.
    */
   Eigen::Matrix<double, 6, 6> compute_H_radar();
 

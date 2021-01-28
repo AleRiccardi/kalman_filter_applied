@@ -111,7 +111,8 @@ void KalmanFilter::correction_step(Eigen::Matrix<double, 6, 1> Y_t,
   // ---------------------------------------------------------------------------
   // Correct state and coovariance
   state_t_ = state_t_ + K_t * Y_t;
-  P_ = P_ - K_t * S_t * K_t.transpose();
+  P_ = (Eigen::Matrix<double, 6, 6>::Identity() - K_t * H_t) * P_;
+  // P_ = P_ - K_t * S_t * K_t.transpose();
 }
 
 void KalmanFilter::update_F() {
@@ -159,7 +160,7 @@ Eigen::Vector3d KalmanFilter::h_radar() {
   double y = state_t_(1, 0) - params_->init_pose_radar(1, 0);
   double z = state_t_(2, 0) - params_->init_pose_radar(2, 0);
 
-  // From local cartesian coordinates to local polar coordinates
+  // From local cartesian coordinates to local spherical coordinates
   z_radar(0, 0) =
       std::pow(std::pow(x, 2) + std::pow(y, 2) + std::pow(z, 2), 0.5);
   z_radar(1, 0) = std::acos(z / z_radar(0, 0));
